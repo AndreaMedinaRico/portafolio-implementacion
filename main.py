@@ -1,4 +1,6 @@
 '''
+Archivo: main.py
+Descripción: Archivo principal.
 Autora: Andrea Medina Rico
 '''
 import numpy as np
