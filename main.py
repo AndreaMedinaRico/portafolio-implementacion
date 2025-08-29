@@ -14,7 +14,7 @@ from transformation import Transformation
 pd.set_option('display.max_columns', None)  # Muestra todas las columnas
 pd.set_option('display.width', 200)         # Ajusta el ancho
 
-penguins = pd.read_csv("penguins_size.csv")
+penguins = pd.read_csv("data/penguins_size.csv")
 
 # ------ TRANSFORMACIÓN --------
 trans = Transformation(penguins)
