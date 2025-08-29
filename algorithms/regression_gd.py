@@ -31,10 +31,6 @@ def hypothesis(data, params, b):
   # Adición de bias a cada renglón
   predicted_y =  sum_params + b
 
-  print("Data", data)
-  print("Params", params)
-  print("Predicted y", predicted_y)
-
   return predicted_y
 
 
@@ -80,7 +76,6 @@ def update(data, params, b, real_y, alfa, m, n):
   grad = np.sum(error)
   new_b = b - alfa / m * grad
 
-  print("Error:", error)
   print("Params:", params)
   print("B:", b)
   print("New params:", new_params)
@@ -115,9 +110,6 @@ def MSE(data, params, b, real_y, m):
 
   final_cost = cost / (2 * m)
 
-  print("Real y:", real_y)
-  print("Final cost MSE:", final_cost)
-
   return final_cost
 
 
@@ -140,7 +132,7 @@ def epochs(data, params, b, real_y, alfa, num_epochs, m, n):
   error = np.zeros(num_epochs)
   i = 0
   while (i < num_epochs):
-    print("\n \n Epoch:", i, "\n \n")
+    print("\nEpoch:", i, "\n")
     error[i] = MSE(data, params, b, real_y, m)
     if (error[i] == 0):
       break

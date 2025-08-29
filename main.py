@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 from transformation import Transformation
-from algorithms.regression_gd import epochs
+from algorithms.regression_gd import epochs, MSE
 from statistic import correlation_matrix, pairplot, scatter_subplots, kdeplot_subplots
 
 pd.set_option('display.max_columns', None)  # Muestra todas las columnas
@@ -46,6 +46,7 @@ print(trans.data.count())
 
 
 # ------ ESTADÍSTICA --------
+'''
 # Matriz de correlación
 correlation_matrix(trans.data)
 
@@ -59,6 +60,7 @@ scatter_subplots(trans.data, scatter_cols, 'body_mass_kg')
 # Kdeplot
 kdeplot_cols = ['body_mass_kg', 'flipper_length_cm', 'culmen_length_cm', 'culmen_depth_cm']
 kdeplot_subplots(trans.data, kdeplot_cols)
+'''
 
 # Selección de variables 
 trans.data = trans.data.drop(columns = ['island_Torgersen', 'species_Chinstrap'])   
@@ -94,7 +96,7 @@ real_y = data_train[:, 3]                       # Valores reales de y
 print(real_y)
 data_train = np.delete(data_train, 3, axis=1)   # Dejar solo las x en data train
 alfa = 0.0001
-num_epochs = 10
+num_epochs = 2
 params = np.zeros(data_train.shape[1])
 b = 0
 
@@ -122,7 +124,13 @@ for i in range(k):
 
     # 3. Aplicar gradient descent en train
     m, n = train_split.shape
-    epochs(train_split, params, b, train_y, alfa, num_epochs, m, n)
+    print("Split ", i)
+    new_params, new_b = epochs(train_split, params, b, train_y, alfa, num_epochs, m, n)
 
     # 4. Guardar el loss de train
+    train_loss = MSE(train_split, params, b, train_y, m)
+    print("Train loss:", train_loss)
+
     # 5. Guardar el loss de test al predecir
+    test_loss = MSE(test_split, new_params, new_b, test_y, test_split.shape[0])
+    print("Test loss:", test_loss)
