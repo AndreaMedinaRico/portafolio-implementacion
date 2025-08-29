@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 from transformation import Transformation
+from algorithms.cross_validation import cross_validation
 from algorithms.regression_gd import epochs, MSE
 from statistic import correlation_matrix, pairplot, scatter_subplots, kdeplot_subplots
 
@@ -99,38 +100,6 @@ alfa = 0.0001
 num_epochs = 2
 params = np.zeros(data_train.shape[1])
 b = 0
-
-# TEN FOLD CROSS VALIDATION 
-# 1. Usaré todas las columnas menos 'island_Torgersen' y 'species_Chinstrap'
-# para usar k - 1 de cada clase 
-
 k = 10
-splits = np.array_split(data_train, k)
-y_splits = np.array_split(real_y, k)
 
-for i in range(k):
-    # 1. Usar split 1 como test
-    test_split = splits[i]
-    test_y = y_splits[i]
-    # 2. Usar los demás como train
-    train_folds = []
-    y_folds = []
-    for j in range(k):
-        if j != i:
-            train_folds.append(splits[j])
-            y_folds.append(y_splits[j])
-    train_split = np.concatenate(train_folds)
-    train_y = np.concatenate(y_folds)
-
-    # 3. Aplicar gradient descent en train
-    m, n = train_split.shape
-    print("Split ", i)
-    new_params, new_b = epochs(train_split, params, b, train_y, alfa, num_epochs, m, n)
-
-    # 4. Guardar el loss de train
-    train_loss = MSE(train_split, params, b, train_y, m)
-    print("Train loss:", train_loss)
-
-    # 5. Guardar el loss de test al predecir
-    test_loss = MSE(test_split, new_params, new_b, test_y, test_split.shape[0])
-    print("Test loss:", test_loss)
+cross_validation(data_train, real_y, k, params, b, alfa, num_epochs)
