@@ -1,6 +1,7 @@
 '''
 Archivo: main.py
-Descripción: Archivo principal.
+Descripción: Archivo principal para la predicción de
+    la masa de los pingüinos.
 Autora: Andrea Medina Rico
 '''
 import numpy as np
@@ -18,8 +19,8 @@ penguins = pd.read_csv("penguins_size.csv")
 # ------ TRANSFORMACIÓN --------
 trans = Transformation(penguins)
 
-trans.drop_na()
 trans.cat_to_num('sex', 'MALE', 'FEMALE')
+trans.drop_na()
 trans.one_hot_encoding('species')
 trans.one_hot_encoding('island')
 
@@ -39,6 +40,7 @@ trans.rename_columns({
 print(trans.data.info())
 print(trans.data.describe())
 print(trans.data.head())
+print(trans.data.count())
 
 
 # ------ ESTADÍSTICA --------
@@ -93,3 +95,20 @@ plt.subplot(224)
 sns.kdeplot(trans.data['culmen_depth_cm'], fill = True)
 plt.title('Distribución de Culmen Depth')
 plt.show()
+
+# Hypothesis testing for flipper length cm
+null_corr = 0
+corr = trans.data['body_mass_kg'].corr(trans.data['flipper_length_cm'])
+print("Correlation coefficient:", corr)
+
+SE_corr = np.sqrt((1 - corr**2) / (trans.data.shape[0] - 2))
+t_stat = (corr - null_corr) / SE_corr
+print("t-statistic:", t_stat)
+
+
+# Data division in test and train
+data_random = trans.data.sample(frac = 1, random_state = 42).reset_index(drop = True)
+
+train_size = int(0.8 * len(data_random))
+data_train = data_random[:train_size]
+data_test = data_random[train_size:]
