@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 from transformation import Transformation
+from algorithms.regression_gd import epochs
 
 pd.set_option('display.max_columns', None)  # Muestra todas las columnas
 pd.set_option('display.width', 200)         # Ajusta el ancho
@@ -44,7 +45,7 @@ print(trans.data.count())
 
 
 # ------ ESTADÍSTICA --------
-
+'''
 # Matriz de correlación
 corr_matrix = trans.data.corr()
 plt.figure(figsize=(10, 8))
@@ -53,11 +54,10 @@ plt.title('Matriz de correlación')
 plt.show()
 
 # Pairplot con seaborn
-'''
+
 sns.pairplot(trans.data)
 plt.title('Pairplot de las variables numéricas')
 plt.show()
-'''
 
 # Subplots de sctatterplot matplot
 plt.subplot(231)
@@ -95,6 +95,10 @@ plt.subplot(224)
 sns.kdeplot(trans.data['culmen_depth_cm'], fill = True)
 plt.title('Distribución de Culmen Depth')
 plt.show()
+'''
+
+# Selección de variables 
+trans.data = trans.data.drop(columns = ['island_Torgersen', 'species_Chinstrap'])   
 
 # Hypothesis testing for flipper length cm
 null_corr = 0
@@ -110,5 +114,52 @@ print("t-statistic:", t_stat)
 data_random = trans.data.sample(frac = 1, random_state = 42).reset_index(drop = True)
 
 train_size = int(0.8 * len(data_random))
-data_train = data_random[:train_size]
-data_test = data_random[train_size:]
+pd_train = data_random[:train_size]
+pd_test = data_random[train_size:]
+
+data_train = pd_train.to_numpy()
+data_test = pd_test.to_numpy()
+
+print("Train:", pd_train.shape)
+print(pd_train.info())
+print("Test:", pd_test.shape)
+print(pd_test.info())
+print(pd_test.columns)
+
+# Inicialización de datos
+real_y = data_train[:, 3]                       # Valores reales de y
+print(real_y)
+data_train = np.delete(data_train, 3, axis=1)   # Dejar solo las x en data train
+alfa = 0.0001
+num_epochs = 10
+params = np.zeros(data_train.shape[1])
+b = 0
+
+# TEN FOLD CROSS VALIDATION 
+# 1. Usaré todas las columnas menos 'island_Torgersen' y 'species_Chinstrap'
+# para usar k - 1 de cada clase 
+
+k = 10
+splits = np.array_split(data_train, k)
+y_splits = np.array_split(real_y, k)
+
+for i in range(k):
+    # 1. Usar split 1 como test
+    test_split = splits[i]
+    test_y = y_splits[i]
+    # 2. Usar los demás como train
+    train_folds = []
+    y_folds = []
+    for j in range(k):
+        if j != i:
+            train_folds.append(splits[j])
+            y_folds.append(y_splits[j])
+    train_split = np.concatenate(train_folds)
+    train_y = np.concatenate(y_folds)
+
+    # 3. Aplicar gradient descent en train
+    m, n = train_split.shape
+    epochs(train_split, params, b, train_y, alfa, num_epochs, m, n)
+
+    # 4. Guardar el loss de train
+    # 5. Guardar el loss de test al predecir

@@ -1,6 +1,7 @@
 '''
-Implementación manual de regresión lineal con gradiente descendiente.
-
+Archivo: regression_gd.py
+Descripción: Implementación manual de regresión lineal con gradiente
+  descendiente.
 Autora: Andrea Medina Rico
 '''
 
@@ -63,7 +64,7 @@ def update(data, params, b, real_y, alfa, m, n):
   new_params = np.zeros(n)
 
   # Guardamos valores de y predecidos
-  predicted_y = hypothesis(data, params, b, m, n)
+  predicted_y = hypothesis(data, params, b)
 
   # Guardamos error de cada renglón (prediccion - real)
   error = predicted_y - real_y
@@ -135,7 +136,7 @@ Return:
   params - parámetros finales
   b - bias final
 '''
-def epochs(data, params, b, real_y, alfa, num_epochs, m):
+def epochs(data, params, b, real_y, alfa, num_epochs, m, n):
   error = np.zeros(num_epochs)
   i = 0
   while (i < num_epochs):
@@ -143,7 +144,7 @@ def epochs(data, params, b, real_y, alfa, num_epochs, m):
     error[i] = MSE(data, params, b, real_y, m)
     if (error[i] == 0):
       break
-    params, b = update(data, params, b, real_y, alfa, m)
+    params, b = update(data, params, b, real_y, alfa, m, n)
     i += 1
 
   return params, b
