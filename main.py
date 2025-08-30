@@ -12,7 +12,7 @@ import seaborn as sns
 from transformation import Transformation
 from algorithms.cross_validation import cross_validation
 from algorithms.regression_gd import epochs, MSE
-from statistic import correlation_matrix, pairplot, scatter_subplots, kdeplot_subplots, histogram
+from statistic import correlation_matrix, pairplot, scatter_subplots, kdeplot_subplots, histogram, loss_plot
 
 pd.set_option('display.max_columns', None)  # Muestra todas las columnas
 pd.set_option('display.width', 200)         # Ajusta el ancho
@@ -62,13 +62,13 @@ scatter_subplots(trans.data, scatter_cols, 'body_mass_kg')
 # Kdeplot
 kdeplot_cols = ['body_mass_kg', 'flipper_length_cm', 'culmen_length_cm', 'culmen_depth_cm']
 kdeplot_subplots(trans.data, kdeplot_cols)
-'''
 
 # Histograma de cada variablee
 histogram(trans.data, 'body_mass_kg')
 histogram(trans.data, 'flipper_length_cm')
 histogram(trans.data, 'culmen_length_cm')
 histogram(trans.data, 'culmen_depth_cm')
+'''
 
 
 # Selección de variables 
@@ -104,10 +104,14 @@ print(pd_test.columns)
 real_y = data_train[:, 3]                       # Valores reales de y
 print(real_y)
 data_train = np.delete(data_train, 3, axis=1)   # Dejar solo las x en data train
-alfa = 0.0001
-num_epochs = 2
+alfa = 0.001                                    # Inició en 0.0001
+num_epochs = 70                              # Inició en 100  --> MSE de 0.15
 params = np.zeros(data_train.shape[1])
 b = 0
 k = 10
 
-cross_validation(data_train, real_y, k, params, b, alfa, num_epochs)
+train_loss, train_loss_mean, test_loss, test_loss_mean = cross_validation(data_train, real_y, k, params, b, alfa, num_epochs)
+print("Final Train loss:", train_loss)
+print("Final Test loss:", test_loss_mean)
+
+loss_plot(train_loss)

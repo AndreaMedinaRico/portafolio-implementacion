@@ -138,4 +138,4 @@ def epochs(data, params, b, real_y, alfa, num_epochs, m, n):
     params, b = update(data, params, b, real_y, alfa, m, n)
     i += 1
 
-  return params, b
+  return params, b, error

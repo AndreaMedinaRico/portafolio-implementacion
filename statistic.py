@@ -48,3 +48,13 @@ def histogram(data, col):
     plt.xlabel(col)
     plt.ylabel('Frecuencia')
     plt.show()
+
+
+def loss_plot(train_loss):
+    plt.figure(figsize=(10, 6))
+    plt.plot(train_loss, label='Train loss')
+    plt.title('Pérdida durante el entrenamiento')
+    plt.xlabel('Épocas')
+    plt.ylabel('Pérdida')
+    plt.legend()
+    plt.show()
