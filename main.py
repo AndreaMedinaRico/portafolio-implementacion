@@ -12,7 +12,7 @@ import seaborn as sns
 from transformation import Transformation
 from algorithms.cross_validation import cross_validation
 from algorithms.regression_gd import epochs, MSE
-from statistic import correlation_matrix, pairplot, scatter_subplots, kdeplot_subplots, histogram, loss_plot, loss_plot_train_test
+from statistic import Statistic
 
 pd.set_option('display.max_columns', None)  # Muestra todas las columnas
 pd.set_option('display.width', 200)         # Ajusta el ancho
@@ -48,26 +48,27 @@ print(trans.data.count())
 
 
 # ------ ESTADÍSTICA --------
+stat = Statistic()
 '''
 # Matriz de correlación
-correlation_matrix(trans.data)
+stat.correlation_matrix(trans.data)
 
 # Pairplot con seaborn
-pairplot(trans.data)    
+stat.pairplot(trans.data)
 
 # Subplots de sctatterplot matplot
 scatter_cols = ['flipper_length_cm', 'culmen_length_cm', 'culmen_depth_cm', 'species_Gentoo', 'island_Biscoe', 'species_Adelie']
-scatter_subplots(trans.data, scatter_cols, 'body_mass_kg')
+stat.scatter_subplots(trans.data, scatter_cols, 'body_mass_kg')
 
 # Kdeplot
 kdeplot_cols = ['body_mass_kg', 'flipper_length_cm', 'culmen_length_cm', 'culmen_depth_cm']
-kdeplot_subplots(trans.data, kdeplot_cols)
+stat.kdeplot_subplots(trans.data, kdeplot_cols)
 
 # Histograma de cada variablee
-histogram(trans.data, 'body_mass_kg')
-histogram(trans.data, 'flipper_length_cm')
-histogram(trans.data, 'culmen_length_cm')
-histogram(trans.data, 'culmen_depth_cm')
+stat.histogram(trans.data, 'body_mass_kg')
+stat.histogram(trans.data, 'flipper_length_cm')
+stat.histogram(trans.data, 'culmen_length_cm')
+stat.histogram(trans.data, 'culmen_depth_cm')
 '''
 
 
@@ -113,5 +114,5 @@ train_loss, train_loss_mean, test_loss, test_loss_mean = cross_validation(data_t
 print("Final Train loss mean:", train_loss_mean)
 print("Final Test loss:", test_loss_mean)
 
-loss_plot(train_loss[2])  
-loss_plot_train_test(train_loss[2], test_loss[2])
+stat.loss_plot(train_loss[2])  
+stat.loss_plot_train_test(train_loss[2], test_loss[2])
