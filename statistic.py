@@ -6,6 +6,7 @@ Autora: Andrea Medina Rico
 '''
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 
 class Statistic:
     def __init__(self):
@@ -73,3 +74,21 @@ class Statistic:
         plt.ylabel('Pérdida')
         plt.legend()
         plt.show()
+
+
+    def prediction_plot(self, real_y, predicted_y):
+        plt.figure(figsize=(10, 6))
+        plt.scatter(range(len(real_y)), real_y, color='green', alpha=0.6, label='Valores reales')
+        plt.scatter(range(len(predicted_y)), predicted_y, color='blue', alpha=0.6, label='Predicciones')
+        plt.title('Predicciones y Valores Reales')
+        plt.xlabel('Índice')
+        plt.ylabel('Valor')
+        plt.legend()
+        plt.show()
+
+
+    def r2_score(self, real_y, predicted_y):
+        ss_res = np.sum((real_y - predicted_y) ** 2)
+        ss_tot = np.sum((real_y - np.mean(real_y)) ** 2)
+        r2 = 1 - (ss_res / ss_tot)
+        return r2

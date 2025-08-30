@@ -24,7 +24,7 @@ def zscores_measures(data):
     return media, std
 
 '''
-Función: normalization_zscore
+Función: standardize_zscore
 Descripción: Normaliza los datos utilizando la normalización Z-score
     por cada característica.
 Params:
@@ -32,8 +32,7 @@ Params:
 Returns:
     normalized_data: Conjunto de datos normalizado.
 '''
-def normalization_zscore(data):
-    media, std = zscores_measures(data)
+def standardize_zscore(data, media, std):
     normalized_data = (data - media) / std
 
     return normalized_data
@@ -79,9 +78,9 @@ def cross_validation(data, real_y, k, params, b, alfa, num_epochs):
         train_y = np.concatenate(y_folds)
 
         # 3. Estandarizar los datos
-        mean, std = zscores_measures(train_split)
-        train_split = (train_split - mean) / std
-        test_split = (test_split - mean) / std
+        media, std = zscores_measures(train_split)
+        train_split = standardize_zscore(train_split, media, std)
+        test_split = standardize_zscore(test_split, media, std)
 
         # 4. Aplicar gradient descent en train
         m, n = train_split.shape

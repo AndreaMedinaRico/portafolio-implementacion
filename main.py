@@ -10,8 +10,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 from transformation import Transformation
-from algorithms.cross_validation import cross_validation
-from algorithms.regression_gd import epochs, MSE
+from algorithms.cross_validation import cross_validation, zscores_measures, standardize_zscore
+from algorithms.regression_gd import epochs, hypothesis
 from statistic import Statistic
 
 pd.set_option('display.max_columns', None)  # Muestra todas las columnas
@@ -19,7 +19,7 @@ pd.set_option('display.width', 200)         # Ajusta el ancho
 
 penguins = pd.read_csv("data/penguins_size.csv")
 
-# ------ TRANSFORMACIÓN --------
+# -------- TRANSFORMACIÓN ----------
 trans = Transformation(penguins)
 
 trans.cat_to_num('sex', 'MALE', 'FEMALE')
@@ -47,7 +47,7 @@ print(trans.data.head())
 print(trans.data.count())
 
 
-# ------ ESTADÍSTICA --------
+# -------- ESTADÍSTICA ----------
 stat = Statistic()
 '''
 # Matriz de correlación
@@ -102,17 +102,41 @@ print(pd_test.info())
 print(pd_test.columns)
 
 # Inicialización de datos
-real_y = data_train[:, 3]                      
+real_y_train = data_train[:, 3]                      
 data_train = np.delete(data_train, 3, axis=1)   
+
+real_y_test = data_test[:, 3]
+data_test = np.delete(data_test, 3, axis=1)
+
 alfa = 0.001                                    
-num_epochs = 2000                              
+num_epochs = 5000                              
 params = np.zeros(data_train.shape[1])
+m, n = data_train.shape
 b = 0
 k = 10
 
-train_loss, train_loss_mean, test_loss, test_loss_mean = cross_validation(data_train, real_y, k, params, b, alfa, num_epochs)
-print("Final Train loss mean:", train_loss_mean)
-print("Final Test loss:", test_loss_mean)
+train_loss_cv, train_loss_mean, test_loss_cv, test_loss_mean = cross_validation(data_train, real_y_train, k, params, b, alfa, num_epochs)
+print("Final Train loss mean in validation:", train_loss_mean)
+print("Final Test loss in validation:", test_loss_mean)
 
-stat.loss_plot(train_loss[2])  
-stat.loss_plot_train_test(train_loss[2], test_loss[2])
+stat.loss_plot(train_loss_cv[2])  
+stat.loss_plot_train_test(train_loss_cv[2], test_loss_cv[2])
+
+# ------- ENTRENAMIENTO --------
+
+# Normalización de los datos
+mean, std = zscores_measures(data_train)
+data_train = standardize_zscore(data_train, mean, std)
+data_test = standardize_zscore(data_test, mean, std)
+
+new_params, new_b, train_loss, test_loss = epochs(data_train, params, b, real_y_train, alfa, num_epochs, m, n, data_test, real_y_test)
+print("Final parameters:", new_params)
+print("Final bias:", new_b)
+stat.loss_plot_train_test(train_loss, test_loss)
+
+# ------ PREDICCIONES ---------
+predicted_y_test = hypothesis(data_test, new_params, new_b)
+
+stat.prediction_plot(real_y_test, predicted_y_test)
+r2_score = stat.r2_score(real_y_test, predicted_y_test)
+print("Coeficiente de determinación:", r2_score)
