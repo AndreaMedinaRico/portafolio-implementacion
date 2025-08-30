@@ -56,11 +56,12 @@ Returns:
     test_loss_mean: Pérdida media en el conjunto de prueba.
 '''
 def cross_validation(data, real_y, k, params, b, alfa, num_epochs):
+    # División de los datos en k partes
     splits = np.array_split(data, k)
     y_splits = np.array_split(real_y, k)
 
-    train_loss = np.zeros(k)
-    test_loss = np.zeros(k)
+    all_train_loss = []
+    all_test_loss = []
 
     for i in range(k):
         # 1. Usar split 1 como test
@@ -77,16 +78,23 @@ def cross_validation(data, real_y, k, params, b, alfa, num_epochs):
         train_split = np.concatenate(train_folds)
         train_y = np.concatenate(y_folds)
 
-        # 3. Aplicar gradient descent en train
+        # 3. Estandarizar los datos
+        mean, std = zscores_measures(train_split)
+        train_split = (train_split - mean) / std
+        test_split = (test_split - mean) / std
+
+        # 4. Aplicar gradient descent en train
         m, n = train_split.shape
         print("Split ", i)
-        new_params, new_b, train_loss = epochs(train_split, params, b, train_y, alfa, num_epochs, m, n)
+        new_params, new_b, train_loss, test_loss = epochs(
+            train_split, params, b, train_y, alfa, num_epochs, m, n, test_split, test_y
+        )
 
-        # 5. Guardar el loss de test al predecir
-        test_loss[i] = MSE(test_split, new_params, new_b, test_y, test_split.shape[0])
+        all_train_loss.append(train_loss)
+        all_test_loss.append(test_loss)
 
-    # 6. Calcular promedios del loss
-    train_loss_mean = train_loss.mean()
-    test_loss_mean = test_loss.mean()
+    # 5. Calcular promedios del loss
+    train_loss_mean = np.mean(all_train_loss)
+    test_loss_mean = np.mean(all_test_loss)
 
-    return train_loss, train_loss_mean, test_loss, test_loss_mean
+    return all_train_loss, train_loss_mean, all_test_loss, test_loss_mean

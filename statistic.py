@@ -58,3 +58,14 @@ def loss_plot(train_loss):
     plt.ylabel('Pérdida')
     plt.legend()
     plt.show()
+
+
+def loss_plot_train_test(train_loss, test_loss):
+    plt.figure(figsize=(10, 6))
+    plt.plot(train_loss, label='Train loss')
+    plt.plot(test_loss, label='Test loss')
+    plt.title('Pérdida durante el entrenamiento y prueba')
+    plt.xlabel('Épocas')
+    plt.ylabel('Pérdida')
+    plt.legend()
+    plt.show()

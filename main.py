@@ -12,7 +12,7 @@ import seaborn as sns
 from transformation import Transformation
 from algorithms.cross_validation import cross_validation
 from algorithms.regression_gd import epochs, MSE
-from statistic import correlation_matrix, pairplot, scatter_subplots, kdeplot_subplots, histogram, loss_plot
+from statistic import correlation_matrix, pairplot, scatter_subplots, kdeplot_subplots, histogram, loss_plot, loss_plot_train_test
 
 pd.set_option('display.max_columns', None)  # Muestra todas las columnas
 pd.set_option('display.width', 200)         # Ajusta el ancho
@@ -101,17 +101,17 @@ print(pd_test.info())
 print(pd_test.columns)
 
 # Inicialización de datos
-real_y = data_train[:, 3]                       # Valores reales de y
-print(real_y)
-data_train = np.delete(data_train, 3, axis=1)   # Dejar solo las x en data train
-alfa = 0.001                                    # Inició en 0.0001
-num_epochs = 70                              # Inició en 100  --> MSE de 0.15
+real_y = data_train[:, 3]                      
+data_train = np.delete(data_train, 3, axis=1)   
+alfa = 0.001                                    
+num_epochs = 2000                              
 params = np.zeros(data_train.shape[1])
 b = 0
 k = 10
 
 train_loss, train_loss_mean, test_loss, test_loss_mean = cross_validation(data_train, real_y, k, params, b, alfa, num_epochs)
-print("Final Train loss:", train_loss)
+print("Final Train loss mean:", train_loss_mean)
 print("Final Test loss:", test_loss_mean)
 
-loss_plot(train_loss)
+loss_plot(train_loss[2])  
+loss_plot_train_test(train_loss[2], test_loss[2])

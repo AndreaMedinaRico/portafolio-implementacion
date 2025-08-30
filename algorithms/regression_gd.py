@@ -75,8 +75,6 @@ def update(data, params, b, real_y, alfa, m, n):
   grad = np.sum(error)
   new_b = b - alfa / m * grad
 
-  print("Params:", params)
-  print("B:", b)
   print("New params:", new_params)
   print("New b:", new_b)
 
@@ -127,15 +125,22 @@ Return:
   params - parámetros finales
   b - bias final
 '''
-def epochs(data, params, b, real_y, alfa, num_epochs, m, n):
-  error = np.zeros(num_epochs)
+def epochs(data, params, b, real_y, alfa, num_epochs, m, n, test_data, test_y):
+  train_error = np.zeros(num_epochs)
+  test_error = np.zeros(num_epochs)
   i = 0
   while (i < num_epochs):
     print("\nEpoch:", i, "\n")
-    error[i] = MSE(data, params, b, real_y, m)
-    if (error[i] == 0):
+
+    train_error[i] = MSE(data, params, b, real_y, m)
+    test_error[i] = MSE(test_data, params, b, test_y, test_data.shape[0])
+
+    print("Train error:", train_error[i])
+    print("Test error:", test_error[i])
+
+    if (train_error[i] == 0):
       break
     params, b = update(data, params, b, real_y, alfa, m, n)
     i += 1
 
-  return params, b, error
+  return params, b, train_error, test_error
