@@ -12,7 +12,7 @@ import seaborn as sns
 from transformation import Transformation
 from algorithms.cross_validation import cross_validation
 from algorithms.regression_gd import epochs, MSE
-from statistic import correlation_matrix, pairplot, scatter_subplots, kdeplot_subplots
+from statistic import correlation_matrix, pairplot, scatter_subplots, kdeplot_subplots, histogram
 
 pd.set_option('display.max_columns', None)  # Muestra todas las columnas
 pd.set_option('display.width', 200)         # Ajusta el ancho
@@ -23,6 +23,7 @@ penguins = pd.read_csv("data/penguins_size.csv")
 trans = Transformation(penguins)
 
 trans.cat_to_num('sex', 'MALE', 'FEMALE')
+print("NA:", trans.data.isna().sum())
 trans.drop_na()
 trans.one_hot_encoding('species')
 trans.one_hot_encoding('island')
@@ -62,6 +63,13 @@ scatter_subplots(trans.data, scatter_cols, 'body_mass_kg')
 kdeplot_cols = ['body_mass_kg', 'flipper_length_cm', 'culmen_length_cm', 'culmen_depth_cm']
 kdeplot_subplots(trans.data, kdeplot_cols)
 '''
+
+# Histograma de cada variablee
+histogram(trans.data, 'body_mass_kg')
+histogram(trans.data, 'flipper_length_cm')
+histogram(trans.data, 'culmen_length_cm')
+histogram(trans.data, 'culmen_depth_cm')
+
 
 # Selección de variables 
 trans.data = trans.data.drop(columns = ['island_Torgersen', 'species_Chinstrap'])   

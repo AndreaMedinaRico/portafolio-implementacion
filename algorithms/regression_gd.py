@@ -34,7 +34,6 @@ def hypothesis(data, params, b):
   return predicted_y
 
 
-
 '''
 Función: update
   Cálculo del resto de la fórmula gradient descent, en donde se actualiza el

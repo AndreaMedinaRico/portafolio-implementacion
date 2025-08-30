@@ -39,3 +39,12 @@ def kdeplot_subplots(data, cols):
         plt.title(f'Distribución de {col}')
     plt.tight_layout()
     plt.show()
+
+
+def histogram(data, col):
+    plt.figure(figsize=(10, 6))
+    sns.histplot(data[col], bins=30, kde=True)
+    plt.title(f'Histograma de {col}')
+    plt.xlabel(col)
+    plt.ylabel('Frecuencia')
+    plt.show()
