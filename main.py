@@ -7,7 +7,6 @@ Autora: Andrea Medina Rico
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 from transformation import Transformation
 from algorithms.cross_validation import cross_validation, zscores_measures, standardize_zscore
@@ -27,6 +26,9 @@ print("NA:", trans.data.isna().sum())
 trans.drop_na()
 trans.one_hot_encoding('species')
 trans.one_hot_encoding('island')
+
+# Mantener k - 1 variables dummy
+trans.data = trans.data.drop(columns = ['island_Torgersen', 'species_Chinstrap'])   
 
 trans.change_units('body_mass_g', 1000)
 trans.change_units('flipper_length_mm', 10)
@@ -49,15 +51,12 @@ print(trans.data.count())
 
 # -------- ESTADÍSTICA ----------
 stat = Statistic()
-'''
+
 # Matriz de correlación
 stat.correlation_matrix(trans.data)
 
-# Pairplot con seaborn
-stat.pairplot(trans.data)
-
 # Subplots de sctatterplot matplot
-scatter_cols = ['flipper_length_cm', 'culmen_length_cm', 'culmen_depth_cm', 'species_Gentoo', 'island_Biscoe', 'species_Adelie']
+scatter_cols = ['flipper_length_cm', 'culmen_length_cm', 'culmen_depth_cm', 'species_Gentoo', 'species_Adelie', 'island_Biscoe', 'sex']
 stat.scatter_subplots(trans.data, scatter_cols, 'body_mass_kg')
 
 # Kdeplot
@@ -69,11 +68,6 @@ stat.histogram(trans.data, 'body_mass_kg')
 stat.histogram(trans.data, 'flipper_length_cm')
 stat.histogram(trans.data, 'culmen_length_cm')
 stat.histogram(trans.data, 'culmen_depth_cm')
-'''
-
-
-# Selección de variables 
-trans.data = trans.data.drop(columns = ['island_Torgersen', 'species_Chinstrap'])   
 
 # Hypothesis testing for flipper length cm
 null_corr = 0
@@ -115,12 +109,16 @@ m, n = data_train.shape
 b = 0
 k = 10
 
-train_loss_cv, train_loss_mean, test_loss_cv, test_loss_mean = cross_validation(data_train, real_y_train, k, params, b, alfa, num_epochs)
+train_loss_cv, train_loss_mean, test_loss_cv, test_loss_mean, train_RMSE, test_RMSE, train_MAE, test_MAE = cross_validation(data_train, real_y_train, k, params, b, alfa, num_epochs)
 print("Final Train loss mean in validation:", train_loss_mean)
 print("Final Test loss in validation:", test_loss_mean)
+print("Final Train RMSE in validation:", train_RMSE)
+print("Final Test RMSE in validation:", test_RMSE)
+print("Final Train MAE in validation:", train_MAE)
+print("Final Test MAE in validation:", test_MAE)
 
 stat.loss_plot(train_loss_cv[2])  
-stat.loss_plot_train_test(train_loss_cv[2], test_loss_cv[2])
+stat.loss_plot_train_test(train_loss_cv[2], test_loss_cv[2], 'Train loss vs Test loss en cross validation')
 
 # ------- ENTRENAMIENTO --------
 
@@ -129,10 +127,16 @@ mean, std = zscores_measures(data_train)
 data_train = standardize_zscore(data_train, mean, std)
 data_test = standardize_zscore(data_test, mean, std)
 
-new_params, new_b, train_loss, test_loss = epochs(data_train, params, b, real_y_train, alfa, num_epochs, m, n, data_test, real_y_test)
+new_params, new_b, train_loss, test_loss, train_RMSE, test_RMSE, train_MAE, test_MAE = epochs(data_train, params, b, real_y_train, alfa, num_epochs, m, n, data_test, real_y_test)
 print("Final parameters:", new_params)
 print("Final bias:", new_b)
-stat.loss_plot_train_test(train_loss, test_loss)
+print("Final Train MSE:", train_loss[-1])
+print("Final Test MSE:", test_loss[-1])
+print("Final Train RMSE:", train_RMSE[-1])
+print("Final Test RMSE:", test_RMSE[-1])
+print("Final Train MAE:", train_MAE[-1])
+print("Final Test MAE:", test_MAE[-1])
+stat.loss_plot_train_test(train_loss, test_loss, 'Train loss vs Test loss')
 
 # ------ PREDICCIONES ---------
 predicted_y_test = hypothesis(data_test, new_params, new_b)

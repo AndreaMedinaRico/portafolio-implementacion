@@ -65,13 +65,13 @@ class Statistic:
         plt.show()
 
 
-    def loss_plot_train_test(self, train_loss, test_loss):
+    def loss_plot_train_test(self, train_loss, test_loss, title):
         plt.figure(figsize=(10, 6))
         plt.plot(train_loss, label='Train loss')
         plt.plot(test_loss, label='Test loss')
-        plt.title('Pérdida durante el entrenamiento y prueba')
+        plt.title(title)
         plt.xlabel('Épocas')
-        plt.ylabel('Pérdida')
+        plt.ylabel('Loss')
         plt.legend()
         plt.show()
 

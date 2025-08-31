@@ -109,6 +109,45 @@ def MSE(data, params, b, real_y, m):
 
   return final_cost
 
+'''
+Función: RMSE
+  Cálculo del Root Mean Squared Error (RMSE)
+Params:
+  data - ejemplos / filas
+  params - valor de los parámetros
+  b - valor del bias intercepto
+  real_y - arreglo de las predicciones de 'y' de tamaño 'm'
+  m - número de ejemplos / filas
+Return:
+  final_cost - valor del RMSE
+'''
+def RMSE(data, params, b, real_y, m):
+
+  mse = MSE(data, params, b, real_y, m)
+  final_cost = np.sqrt(2 * mse)
+
+  return final_cost
+
+
+'''
+Función: MAE
+  Cálculo del Mean Absolute Error (MAE)
+Params:
+  data - ejemplos / filas
+  params - valor de los parámetros
+  b - valor del bias intercepto
+  real_y - arreglo de las predicciones de 'y' de tamaño 'm'
+  m - número de ejemplos / filas
+Return:
+  final_cost - valor del MAE
+'''
+def MAE(data, params, b, real_y, m):
+
+  predicted_y = hypothesis(data, params, b)
+  final_cost = np.sum(np.abs(predicted_y - real_y)) / m
+
+  return final_cost
+
 
 '''
 Función: epochs
@@ -126,21 +165,30 @@ Return:
   b - bias final
 '''
 def epochs(data, params, b, real_y, alfa, num_epochs, m, n, test_data, test_y):
-  train_error = np.zeros(num_epochs)
-  test_error = np.zeros(num_epochs)
+  train_MSE = np.zeros(num_epochs)
+  test_MSE = np.zeros(num_epochs)
+  train_RMSE = np.zeros(num_epochs)
+  test_RMSE = np.zeros(num_epochs)
+  train_MAE = np.zeros(num_epochs)
+  test_MAE = np.zeros(num_epochs)
+
   i = 0
   while (i < num_epochs):
     print("\nEpoch:", i, "\n")
 
-    train_error[i] = MSE(data, params, b, real_y, m)
-    test_error[i] = MSE(test_data, params, b, test_y, test_data.shape[0])
+    train_MSE[i] = MSE(data, params, b, real_y, m)
+    test_MSE[i] = MSE(test_data, params, b, test_y, test_data.shape[0])
 
-    print("Train error:", train_error[i])
-    print("Test error:", test_error[i])
+    train_RMSE[i] = RMSE(data, params, b, real_y, m)
+    test_RMSE[i] = RMSE(test_data, params, b, test_y, test_data.shape[0])
 
-    if (train_error[i] == 0):
-      break
+    train_MAE[i] = MAE(data, params, b, real_y, m)
+    test_MAE[i] = MAE(test_data, params, b, test_y, test_data.shape[0])
+
+    print("Train error:", train_RMSE[i])
+    print("Test error:", test_RMSE[i])
+
     params, b = update(data, params, b, real_y, alfa, m, n)
     i += 1
 
-  return params, b, train_error, test_error
+  return params, b, train_MSE, test_MSE, train_RMSE, test_RMSE, train_MAE, test_MAE
