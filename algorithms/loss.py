@@ -5,7 +5,15 @@ Autora: Andrea Medina Rico
 '''
 
 import numpy as np
-from algorithms.regression_gd import hypothesis
+
+# Misma que en regression_gd.py
+def hypothesis(data, params, b):
+  predicted_y = []
+  param_n = data * params
+  sum_params = np.sum(param_n, axis = 1)
+  predicted_y =  sum_params + b
+
+  return predicted_y
 
 '''
 Función: MSE
@@ -76,7 +84,9 @@ def MAE(data, params, b, real_y, m):
 
 
 def epochs_loss(data, params, b, real_y, m, test_data, test_y):
+    train_mse = MSE(data, params, b, real_y, m)
+    test_mse = MSE(test_data, params, b, test_y, test_data.shape[0])
     train_mae = MAE(data, params, b, real_y, m)
     test_mae = MAE(test_data, params, b, test_y, test_data.shape[0])
 
-    return train_mae, test_mae
+    return train_mse, test_mse, train_mae, test_mae

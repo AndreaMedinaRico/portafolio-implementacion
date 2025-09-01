@@ -4,7 +4,7 @@ Descripción: Implementación manual del algoritmo Ten Fold Cross Validation
     para evaluar el modelo antes de pasar a probarlo.
 Autora: Andrea Medina Rico
 '''
-from algorithms.regression_gd import epochs, MSE
+from algorithms.regression_gd import epochs
 import numpy as np
 
 '''

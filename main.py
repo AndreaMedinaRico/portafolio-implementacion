@@ -104,20 +104,19 @@ mean, std = zscores_measures(data_train)
 data_train = standardize_zscore(data_train, mean, std)
 data_test = standardize_zscore(data_test, mean, std)
 
-new_params, new_b, train_loss, test_loss, train_RMSE, test_RMSE, train_MAE, test_MAE = epochs(data_train, params, b, real_y_train, alfa, num_epochs, m, n, data_test, real_y_test)
+new_params, new_b, train_MSE, test_MSE, train_MAE, test_MAE = epochs(data_train, params, b, real_y_train, alfa, num_epochs, m, n, data_test, real_y_test)
 print("Final parameters:", new_params)
 print("Final bias:", new_b)
-print("Final Train MSE:", train_loss[-1])
-print("Final Test MSE:", test_loss[-1])
-print("Final Train RMSE:", train_RMSE[-1])
-print("Final Test RMSE:", test_RMSE[-1])
+print("Final Train MSE:", train_MSE[-1])
 print("Final Train MAE:", train_MAE[-1])
 print("Final Test MAE:", test_MAE[-1])
-stat.loss_plot_train_test(train_loss, test_loss, 'Train loss vs Test loss')
+print("Final Test MSE:", test_MSE[-1])
+stat.loss_plot_train_test(train_MSE, test_MSE, 'Train loss vs Test loss')
 
 # ------ PREDICCIONES ---------
 predicted_y_test = hypothesis(data_test, new_params, new_b)
 
 stat.prediction_plot(real_y_test, predicted_y_test)
 r2_score = stat.r2_score(real_y_test, predicted_y_test)
-print("Coeficiente de determinación:", r2_score)
+
+print("Coeficiente de determinación R2 en test:", r2_score)

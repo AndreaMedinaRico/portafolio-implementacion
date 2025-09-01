@@ -81,7 +81,7 @@ def update(data, params, b, real_y, alfa, m, n):
 
 '''
 Función: epochs
-  Entrenamiento por épocas
+  Entrenamiento y cálculo de la función de pérdida por épocas
 Params:
   data - ejemplos / filas
   params - valor de los parámetros
@@ -95,6 +95,8 @@ Return:
   b - bias final
 '''
 def epochs(data, params, b, real_y, alfa, num_epochs, m, n, test_data, test_y):
+  train_MSE = np.zeros(num_epochs)
+  test_MSE = np.zeros(num_epochs)
   train_MAE = np.zeros(num_epochs)
   test_MAE = np.zeros(num_epochs)
 
@@ -103,7 +105,7 @@ def epochs(data, params, b, real_y, alfa, num_epochs, m, n, test_data, test_y):
     print("\nEpoch:", i)
 
     params, b = update(data, params, b, real_y, alfa, m, n)
-    train_MAE[i], test_MAE[i] = epochs_loss(data, params, b, real_y, m, test_data, test_y)
+    train_MSE[i], test_MSE[i], train_MAE[i], test_MAE[i] = epochs_loss(data, params, b, real_y, m, test_data, test_y)
     i += 1
 
-  return params, b, train_MAE, test_MAE
+  return params, b, train_MSE, test_MSE, train_MAE, test_MAE
