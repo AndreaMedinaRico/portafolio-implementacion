@@ -7,6 +7,15 @@ Autora: Andrea Medina Rico
 
 from visualization.statistic import Statistic
 
+'''
+Función: visualization
+Descripción: Función para visualizar gráficos a partir de los datos de entrada.
+    Gráficos utilizados para el análisis y reporte.
+Params:
+    - data: DataFrame con los datos a visualizar.
+Returns:
+    - None
+'''
 def visualization(data):
     stat = Statistic()
 
