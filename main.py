@@ -11,7 +11,8 @@ import matplotlib.pyplot as plt
 from transformation import Transformation
 from algorithms.cross_validation import cross_validation, zscores_measures, standardize_zscore
 from algorithms.regression_gd import epochs, hypothesis
-from statistic import Statistic
+from visualization.statistic import Statistic
+from visualization.visualization import visualization
 
 pd.set_option('display.max_columns', None)  # Muestra todas las columnas
 pd.set_option('display.width', 200)         # Ajusta el ancho
@@ -19,6 +20,7 @@ pd.set_option('display.width', 200)         # Ajusta el ancho
 penguins = pd.read_csv("data/penguins_size.csv")
 
 # -------- TRANSFORMACIÓN ----------
+
 trans = Transformation(penguins)
 
 trans.cat_to_num('sex', 'MALE', 'FEMALE')
@@ -48,36 +50,10 @@ print(trans.data.describe())
 print(trans.data.head())
 print(trans.data.count())
 
-
-# -------- ESTADÍSTICA ----------
 stat = Statistic()
-
-# Matriz de correlación
-stat.correlation_matrix(trans.data)
-
-# Subplots de sctatterplot matplot
-scatter_cols = ['flipper_length_cm', 'culmen_length_cm', 'culmen_depth_cm', 'species_Gentoo', 'species_Adelie', 'island_Biscoe', 'island_Dream', 'sex']
-stat.scatter_subplots(trans.data, scatter_cols, 'body_mass_kg')
-
-# Kdeplot
-kdeplot_cols = ['body_mass_kg', 'flipper_length_cm', 'culmen_length_cm', 'culmen_depth_cm']
-stat.kdeplot_subplots(trans.data, kdeplot_cols)
-
-# Histograma de cada variablee
-stat.histogram(trans.data, 'body_mass_kg')
-stat.histogram(trans.data, 'flipper_length_cm')
-stat.histogram(trans.data, 'culmen_length_cm')
-stat.histogram(trans.data, 'culmen_depth_cm')
-
-# Hypothesis testing for flipper length cm
-null_corr = 0
-corr = trans.data['body_mass_kg'].corr(trans.data['flipper_length_cm'])
-print("Correlation coefficient:", corr)
-
-SE_corr = np.sqrt((1 - corr**2) / (trans.data.shape[0] - 2))
-t_stat = (corr - null_corr) / SE_corr
-print("t-statistic:", t_stat)
-
+# -------- GRÁFICOS --------
+# Descomentar para ver gráficos utilizados en el reporte.
+# visualization(trans.data)
 
 # Data division in test and train
 data_random = trans.data.sample(frac = 1, random_state = 42).reset_index(drop = True)
