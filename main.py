@@ -56,7 +56,7 @@ stat = Statistic()
 stat.correlation_matrix(trans.data)
 
 # Subplots de sctatterplot matplot
-scatter_cols = ['flipper_length_cm', 'culmen_length_cm', 'culmen_depth_cm', 'species_Gentoo', 'species_Adelie', 'island_Biscoe', 'sex']
+scatter_cols = ['flipper_length_cm', 'culmen_length_cm', 'culmen_depth_cm', 'species_Gentoo', 'species_Adelie', 'island_Biscoe', 'island_Dream', 'sex']
 stat.scatter_subplots(trans.data, scatter_cols, 'body_mass_kg')
 
 # Kdeplot
@@ -109,6 +109,7 @@ m, n = data_train.shape
 b = 0
 k = 10
 
+'''
 train_loss_cv, train_loss_mean, test_loss_cv, test_loss_mean, train_RMSE, test_RMSE, train_MAE, test_MAE = cross_validation(data_train, real_y_train, k, params, b, alfa, num_epochs)
 print("Final Train loss mean in validation:", train_loss_mean)
 print("Final Test loss in validation:", test_loss_mean)
@@ -119,7 +120,7 @@ print("Final Test MAE in validation:", test_MAE)
 
 stat.loss_plot(train_loss_cv[2])  
 stat.loss_plot_train_test(train_loss_cv[2], test_loss_cv[2], 'Train loss vs Test loss en cross validation')
-
+'''
 # ------- ENTRENAMIENTO --------
 
 # Normalización de los datos

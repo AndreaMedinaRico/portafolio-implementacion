@@ -27,9 +27,9 @@ class Statistic:
 
 
     def scatter_subplots(self, data, x_cols, y_col):
-        plt.figure(figsize = (15, 10))
+        plt.figure(figsize = (16, 8))
         for i, col in enumerate(x_cols):
-            plt.subplot(2, 3, i + 1)
+            plt.subplot(2, 4, i + 1)
             plt.scatter(data[col], data[y_col])
             plt.title(f'{y_col} vs {col}')
         plt.tight_layout()
