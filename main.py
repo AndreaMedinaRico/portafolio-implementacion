@@ -45,9 +45,7 @@ trans.rename_columns({
 })
 
 # Buscar anomalías
-print(trans.data.info())
 print(trans.data.describe())
-print(trans.data.head())
 print(trans.data.count())
 
 stat = Statistic()
@@ -65,11 +63,10 @@ pd_test = data_random[train_size:]
 data_train = pd_train.to_numpy()
 data_test = pd_test.to_numpy()
 
-print("Train:", pd_train.shape)
-print(pd_train.info())
-print("Test:", pd_test.shape)
-print(pd_test.info())
-print(pd_test.columns)
+print("\nTrain:", pd_train.shape)
+print("\nInformación de datos de train:", pd_train.info())
+print("\nTest:", pd_test.shape)
+print("\nInformación de datos de test:", pd_test.info())
 
 # Inicialización de datos
 real_y_train = data_train[:, 3]                      
@@ -85,18 +82,17 @@ m, n = data_train.shape
 b = 0
 k = 10
 
-'''
-train_loss_cv, train_loss_mean, test_loss_cv, test_loss_mean, train_RMSE, test_RMSE, train_MAE, test_MAE = cross_validation(data_train, real_y_train, k, params, b, alfa, num_epochs)
-print("Final Train loss mean in validation:", train_loss_mean)
-print("Final Test loss in validation:", test_loss_mean)
-print("Final Train RMSE in validation:", train_RMSE)
-print("Final Test RMSE in validation:", test_RMSE)
-print("Final Train MAE in validation:", train_MAE)
-print("Final Test MAE in validation:", test_MAE)
 
-stat.loss_plot(train_loss_cv[2])  
+# ------- VALIDACIÓN ---------
+print("\nCross validation... :)")
+
+train_loss_cv, test_loss_cv, train_MAE_mean, test_MAE_mean = cross_validation(data_train, real_y_train, k, params, b, alfa, num_epochs)
+
+print("Final Train MAE mean in validation:", train_MAE_mean)
+print("Final Test MAE mean in validation:", test_MAE_mean)
+
 stat.loss_plot_train_test(train_loss_cv[2], test_loss_cv[2], 'Train loss vs Test loss en cross validation')
-'''
+
 # ------- ENTRENAMIENTO --------
 
 # Normalización de los datos
@@ -104,12 +100,15 @@ mean, std = zscores_measures(data_train)
 data_train = standardize_zscore(data_train, mean, std)
 data_test = standardize_zscore(data_test, mean, std)
 
+print("\n Entrenando modelo... :)")
+
 new_params, new_b, train_MSE, test_MSE, train_MAE, test_MAE = epochs(data_train, params, b, real_y_train, alfa, num_epochs, m, n, data_test, real_y_test)
+
 print("Final parameters:", new_params)
 print("Final bias:", new_b)
-print("Final Train MSE:", train_MSE[-1])
 print("Final Train MAE:", train_MAE[-1])
 print("Final Test MAE:", test_MAE[-1])
+print("Final Train MSE:", train_MSE[-1])
 print("Final Test MSE:", test_MSE[-1])
 stat.loss_plot_train_test(train_MSE, test_MSE, 'Train loss vs Test loss')
 

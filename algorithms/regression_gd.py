@@ -102,8 +102,6 @@ def epochs(data, params, b, real_y, alfa, num_epochs, m, n, test_data, test_y):
 
   i = 0
   while (i < num_epochs):
-    print("\nEpoch:", i)
-
     params, b = update(data, params, b, real_y, alfa, m, n)
     train_MSE[i], test_MSE[i], train_MAE[i], test_MAE[i] = epochs_loss(data, params, b, real_y, m, test_data, test_y)
     i += 1

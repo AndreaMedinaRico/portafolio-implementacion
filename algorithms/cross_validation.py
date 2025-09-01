@@ -61,6 +61,8 @@ def cross_validation(data, real_y, k, params, b, alfa, num_epochs):
 
     all_train_MSE = []
     all_test_MSE = []
+    all_train_MAE = np.zeros(k)
+    all_test_MAE = np.zeros(k)
 
     for i in range(k):
         # 1. Usar split 1 como test
@@ -85,15 +87,17 @@ def cross_validation(data, real_y, k, params, b, alfa, num_epochs):
         # 4. Aplicar gradient descent en train
         m, n = train_split.shape
         print("Split ", i)
-        new_params, new_b, train_MAE, test_MAE = epochs(
+        new_params, new_b, train_MSE, test_MSE, train_MAE, test_MAE = epochs(
             train_split, params, b, train_y, alfa, num_epochs, m, n, test_split, test_y
         )
 
-        all_train_MSE.append(train_MAE)
-        all_test_MSE.append(test_MAE)
+        all_train_MSE.append(train_MSE)
+        all_test_MSE.append(test_MSE)
+        all_train_MAE[i] = np.mean(train_MAE)
+        all_test_MAE[i] = np.mean(test_MAE)
 
-    # 5. Calcular promedios del loss
-    train_loss_mean = np.mean(all_train_MSE)
-    test_loss_mean = np.mean(all_test_MSE)
+    # 5. Calcular promedios del MAE loss
+    train_MAE_mean = np.mean(all_train_MAE)
+    test_MAE_mean = np.mean(all_test_MAE)
 
-    return all_train_MSE, train_loss_mean, all_test_MSE, test_loss_mean, train_MAE, test_MAE
+    return all_train_MSE, all_test_MSE, train_MAE_mean, test_MAE_mean
