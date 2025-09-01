@@ -85,15 +85,15 @@ def cross_validation(data, real_y, k, params, b, alfa, num_epochs):
         # 4. Aplicar gradient descent en train
         m, n = train_split.shape
         print("Split ", i)
-        new_params, new_b, train_MSE, test_MSE, train_RMSE, test_RMSE, train_MAE, test_MAE = epochs(
+        new_params, new_b, train_MAE, test_MAE = epochs(
             train_split, params, b, train_y, alfa, num_epochs, m, n, test_split, test_y
         )
 
-        all_train_MSE.append(train_MSE)
-        all_test_MSE.append(test_MSE)
+        all_train_MSE.append(train_MAE)
+        all_test_MSE.append(test_MAE)
 
     # 5. Calcular promedios del loss
     train_loss_mean = np.mean(all_train_MSE)
     test_loss_mean = np.mean(all_test_MSE)
 
-    return all_train_MSE, train_loss_mean, all_test_MSE, test_loss_mean, train_RMSE, test_RMSE, train_MAE, test_MAE
+    return all_train_MSE, train_loss_mean, all_test_MSE, test_loss_mean, train_MAE, test_MAE
