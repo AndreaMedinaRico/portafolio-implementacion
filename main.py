@@ -6,7 +6,9 @@ Autora: Andrea Medina Rico
 '''
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_absolute_error, r2_score
 
 from transformation import Transformation
 from algorithms.cross_validation import cross_validation, zscores_measures, standardize_zscore
@@ -84,6 +86,7 @@ k = 10
 
 
 # ------- VALIDACIÓN ---------
+'''
 print("\nCross validation... :)")
 
 train_loss_cv, test_loss_cv, train_MAE_mean, test_MAE_mean = cross_validation(data_train, real_y_train, k, params, b, alfa, num_epochs)
@@ -92,6 +95,7 @@ print("Final Train MAE mean in validation:", train_MAE_mean)
 print("Final Test MAE mean in validation:", test_MAE_mean)
 
 stat.loss_plot_train_test(train_loss_cv[2], test_loss_cv[2], 'Train loss vs Test loss en cross validation')
+'''
 
 # ------- ENTRENAMIENTO --------
 
@@ -116,6 +120,34 @@ stat.loss_plot_train_test(train_MSE, test_MSE, 'Train loss vs Test loss')
 predicted_y_test = hypothesis(data_test, new_params, new_b)
 
 stat.prediction_plot(real_y_test, predicted_y_test)
-r2_score = stat.r2_score(real_y_test, predicted_y_test)
+r2_stat = stat.r2_score(real_y_test, predicted_y_test)
 
-print("Coeficiente de determinación R2 en test:", r2_score)
+print("Coeficiente de determinación R2 en test:", r2_stat)
+
+
+# ------- COMPARACIÓN CON SKLEARN --------
+model = LinearRegression()
+model.fit(data_train, real_y_train)
+predicted_y_sklearn = model.predict(data_test)
+r2_sklearn = model.score(data_test, real_y_test)
+print("\nR2 con sklearn:", r2_sklearn)
+print("Bias con sklearn:", model.intercept_)
+print("Parámetros con sklearn:", model.coef_)
+
+# ------- RANDOM FOREST --------
+rf = RandomForestRegressor(
+    n_estimators=500,
+    max_depth=10,
+    min_samples_split=4,
+    min_samples_leaf=2,
+    max_features='sqrt',
+    oob_score=True,
+    random_state=42
+)
+rf.fit(data_train, real_y_train)
+rf_pred = rf.predict(data_test)
+
+print("MAE:", mean_absolute_error(real_y_test, rf_pred))
+print("R2:", r2_score(real_y_test, rf_pred))
+
+stat.prediction_plot(real_y_test, rf_pred)
