@@ -10,7 +10,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, r2_score
 
-from transformation import Transformation
+from model.Transformation import Transformation
 from algorithms.cross_validation import cross_validation, zscores_measures, standardize_zscore
 from algorithms.regression_gd import epochs, hypothesis
 from visualization.statistic import Statistic
