@@ -50,6 +50,8 @@ class Data:
 
         # Actualización de m y n
         self.m, self.n = self.data_train.shape
+        self.train_y = self.train_y.flatten()
+        self.test_y = self.test_y.flatten()
 
 
     def zscores_measures(self, data):

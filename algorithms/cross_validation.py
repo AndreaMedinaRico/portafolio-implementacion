@@ -56,6 +56,8 @@ def cross_validation(data: Data, hyp_params: Hyperparameters, coeffs: Coefficien
         data.m, data.n = data.data_train.shape
         coeffs.params = np.zeros(data.n)
         coeffs.b = 0
+        data.train_y = data.train_y.flatten()
+        data.test_y = data.test_y.flatten()
 
         # 4. Aplicar gradient descent en train
         print("Split ", i)
