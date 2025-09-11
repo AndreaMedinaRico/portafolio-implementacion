@@ -22,7 +22,6 @@ pd.set_option('display.width', 200)
 penguins = pd.read_csv("data/penguins_size.csv")
 
 # -------- TRANSFORMACIÓN ----------
-
 trans = Transformation(penguins)
 
 trans.cat_to_num('sex', 'MALE', 'FEMALE')
@@ -50,6 +49,7 @@ trans.rename_columns({
 print(trans.data.describe())
 print(trans.data.count())
 
+
 stat = Statistic()
 # -------- GRÁFICOS --------
 # Descomentar para ver gráficos utilizados en el reporte.
@@ -68,6 +68,7 @@ coeffs = Coefficients()
 data_validation = Data(trans.data, 0)
 data_validation.split_data()
 coeffs.params = np.zeros(data_validation.data_train.shape[1])
+
 
 # ------- VALIDACIÓN ---------
 '''

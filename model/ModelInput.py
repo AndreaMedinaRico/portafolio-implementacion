@@ -27,6 +27,8 @@ class Data:
 
     
     def split_data(self):
+        ''' Divide el conjunto de datos en entrenamiento y prueba (80%-20%).
+        Además, separa las variables independientes de la dependiente (Y).'''
         data_random = self.data.sample(frac = 1, random_state = 42).reset_index(drop = True)
         train_size = int(0.8 * len(data_random))
 
@@ -55,13 +57,13 @@ class Data:
 
 
     def zscores_measures(self, data):
+        ''' Calcula la media y la desviación estándar de las características. '''
         media = np.mean(data, axis = 0)
         std = np.std(data, axis = 0)
-
         return media, std
 
 
     def standardize_zscore(self, data, media, std):
+        ''' Estandariza los datos usando la normalización Z-score. '''
         normalized_data = (data - media) / std
-
         return normalized_data
