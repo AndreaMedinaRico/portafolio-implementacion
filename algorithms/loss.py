@@ -16,24 +16,9 @@ def hypothesis(data, params, b):
 
   return predicted_y
 
-'''
-Función: MSE
-  Cálculo del Mean Squared Error (MSE)
-Params:
-  data - ejemplos / filas
-  params - valor de los parámetros
-  b - valor del bias intercepto
-  real_y - arreglo de las predicciones de 'y' de tamaño 'm'
-  m - número de ejemplos / filas
-  n - número de parámetros
-Return:
-  final_cost - valor del MSE
-Notas:
-  La multiplicación de 1/2m no afecta el resultado final
-  Esta función es MERAMENTE para INFORMARNOS acerca del comportamiento
-  de los errores.
-'''
+
 def MSE(data, params, b, real_y, m):
+  ''' Cálculo del Mean Squared Error (MSE) '''
   cost = 0
   predicted_y = hypothesis(data, params, b)
 
@@ -44,40 +29,17 @@ def MSE(data, params, b, real_y, m):
 
   return final_cost
 
-'''
-Función: RMSE
-  Cálculo del Root Mean Squared Error (RMSE)
-Params:
-  data - ejemplos / filas
-  params - valor de los parámetros
-  b - valor del bias intercepto
-  real_y - arreglo de las predicciones de 'y' de tamaño 'm'
-  m - número de ejemplos / filas
-Return:
-  final_cost - valor del RMSE
-'''
-def RMSE(data, params, b, real_y, m):
 
+def RMSE(data, params, b, real_y, m):
+  ''' Cálculo del Root Mean Squared Error (RMSE) '''
   mse = MSE(data, params, b, real_y, m)
   final_cost = np.sqrt(2 * mse)
 
   return final_cost
 
 
-'''
-Función: MAE
-  Cálculo del Mean Absolute Error (MAE)
-Params:
-  data - ejemplos / filas
-  params - valor de los parámetros
-  b - valor del bias intercepto
-  real_y - arreglo de las predicciones de 'y' de tamaño 'm'
-  m - número de ejemplos / filas
-Return:
-  final_cost - valor del MAE
-'''
 def MAE(data, params, b, real_y, m):
-
+  ''' Cálculo del Mean Absolute Error (MAE) '''
   predicted_y = hypothesis(data, params, b)
   final_cost = np.sum(np.abs(predicted_y - real_y)) / m
 
@@ -85,6 +47,7 @@ def MAE(data, params, b, real_y, m):
 
 
 def epochs_loss(data: Data, params, b):
+    ''' Cálculo de las pérdidas en cada época '''
     train_mse = MSE(data.data_train, params, b, data.train_y, data.m)
     test_mse = MSE(data.data_test, params, b, data.test_y, data.data_test.shape[0])
     train_mae = MAE(data.data_train, params, b, data.train_y, data.m)
