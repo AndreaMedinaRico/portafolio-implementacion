@@ -103,4 +103,4 @@ def epochs(data: Data, coeffs: Coefficients, hyp_params: Hyperparameters):
   coeffs.params = params
   coeffs.b = b
 
-  return coeffs.params, coeffs.b, train_MSE, test_MSE, train_MAE, test_MAE
+  return train_MSE, test_MSE, train_MAE, test_MAE

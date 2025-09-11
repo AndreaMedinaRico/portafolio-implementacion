@@ -71,16 +71,14 @@ coeffs.params = np.zeros(data_validation.data_train.shape[1])
 
 
 # ------- VALIDACIÓN ---------
-'''
 print("\nCross validation... :)")
-
 train_loss_cv, test_loss_cv, train_MAE_mean, test_MAE_mean = cross_validation(data_validation, hyp_params, coeffs)
 
 print("Final Train MAE mean in validation:", train_MAE_mean)
 print("Final Test MAE mean in validation:", test_MAE_mean)
 
 stat.loss_plot_train_test(train_loss_cv[2], test_loss_cv[2], 'Train loss vs Test loss en cross validation')
-'''
+
 
 # ------- ENTRENAMIENTO --------
 data_regg = Data(trans.data, 0)
@@ -94,30 +92,25 @@ data_regg.data_train = data_regg.standardize_zscore(data_regg.data_train, mean, 
 data_regg.data_test = data_regg.standardize_zscore(data_regg.data_test, mean, std)
 
 print("\n Entrenando modelo... :)")
+train_MSE, test_MSE, train_MAE, test_MAE = epochs(data_regg, coeffs_regg, hyp_params)
 
-new_params, new_b, train_MSE, test_MSE, train_MAE, test_MAE = epochs(data_regg, coeffs_regg, hyp_params)
-
-print("Final parameters:", new_params)
-print("Final bias:", new_b)
+print("Final parameters:", coeffs_regg.params)
+print("Final bias:", coeffs_regg.b)
 print("Final Train MAE:", train_MAE[-1])
 print("Final Test MAE:", test_MAE[-1])
 print("Final Train MSE:", train_MSE[-1])
 print("Final Test MSE:", test_MSE[-1])
 stat.loss_plot_train_test(train_MSE, test_MSE, 'Train loss vs Test loss')
 
-new_coeffs = Coefficients()
-new_coeffs.params = new_params
-new_coeffs.b = new_b
-
 # ------ PREDICCIONES ---------
-predicted_y_test = hypothesis(data_regg.data_test, new_params, new_b)
+predicted_y_test = hypothesis(data_regg.data_test, coeffs_regg.params, coeffs_regg.b)
 
 stat.prediction_plot(data_regg.test_y, predicted_y_test)
 r2_stat = stat.r2_score(data_regg.test_y, predicted_y_test)
 
 print("Coeficiente de determinación R2 en test:", r2_stat)
 
-'''
+
 # ------- RANDOM FOREST --------
 rf = RandomForestRegressor(
     n_estimators=500,
@@ -128,11 +121,10 @@ rf = RandomForestRegressor(
     oob_score=True,
     random_state=42
 )
-rf.fit(data_train, real_y_train)
-rf_pred = rf.predict(data_test)
+rf.fit(data_regg.data_train, data_regg.train_y)
+rf_pred = rf.predict(data_regg.data_test)
 
-print("MAE:", mean_absolute_error(real_y_test, rf_pred))
-print("R2:", r2_score(real_y_test, rf_pred))
+print("MAE:", mean_absolute_error(data_regg.test_y, rf_pred))
+print("R2:", r2_score(data_regg.test_y, rf_pred))
 
-stat.prediction_plot(real_y_test, rf_pred)
-'''
+stat.prediction_plot(data_regg.test_y, rf_pred)

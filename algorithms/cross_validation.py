@@ -61,7 +61,7 @@ def cross_validation(data: Data, hyp_params: Hyperparameters, coeffs: Coefficien
 
         # 4. Aplicar gradient descent en train
         print("Split ", i)
-        coeffs.params, coeffs.b, train_MSE, test_MSE, train_MAE, test_MAE = epochs(data, coeffs, hyp_params)
+        train_MSE, test_MSE, train_MAE, test_MAE = epochs(data, coeffs, hyp_params)
 
         all_train_MSE.append(train_MSE)
         all_test_MSE.append(test_MSE)
