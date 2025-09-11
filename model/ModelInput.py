@@ -38,11 +38,6 @@ class Data:
         self.data_train = pd_train.to_numpy()
         self.data_test = pd_test.to_numpy()
 
-        print("\nTrain:", pd_train.shape)
-        print("\nInformación de datos de train:", pd_train.info())
-        print("\nTest:", pd_test.shape)
-        print("\nInformación de datos de test:", pd_test.info())
-
         # Separación de las Y
         self.train_y = self.data_train[:, 3]                      
         self.data_train = np.delete(self.data_train, 3, axis=1)

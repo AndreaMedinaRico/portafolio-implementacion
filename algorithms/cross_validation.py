@@ -72,4 +72,8 @@ def cross_validation(data: Data, hyp_params: Hyperparameters, coeffs: Coefficien
     train_MAE_mean = np.mean(all_train_MAE)
     test_MAE_mean = np.mean(all_test_MAE)
 
-    return all_train_MSE, all_test_MSE, train_MAE_mean, test_MAE_mean
+    # 6. Calcular promedios del MSE loss por época
+    mean_train_MSE = np.mean(all_train_MSE, axis = 0)
+    mean_test_MSE = np.mean(all_test_MSE, axis = 0) 
+
+    return mean_train_MSE, mean_test_MSE, train_MAE_mean, test_MAE_mean

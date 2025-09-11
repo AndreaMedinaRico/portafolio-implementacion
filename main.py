@@ -74,10 +74,10 @@ coeffs.params = np.zeros(data_validation.data_train.shape[1])
 print("\nCross validation... :)")
 train_loss_cv, test_loss_cv, train_MAE_mean, test_MAE_mean = cross_validation(data_validation, hyp_params, coeffs)
 
-print("Final Train MAE mean in validation:", train_MAE_mean)
-print("Final Test MAE mean in validation:", test_MAE_mean)
+print("Final Train MAE mean:", train_MAE_mean)
+print("Final Validation MAE mean:", test_MAE_mean)
 
-stat.loss_plot_train_test(train_loss_cv[2], test_loss_cv[2], 'Train loss vs Test loss en cross validation')
+stat.loss_plot_train_test(train_loss_cv, test_loss_cv, 'Validation loss')
 
 
 # ------- ENTRENAMIENTO --------
@@ -100,7 +100,7 @@ print("Final Train MAE:", train_MAE[-1])
 print("Final Test MAE:", test_MAE[-1])
 print("Final Train MSE:", train_MSE[-1])
 print("Final Test MSE:", test_MSE[-1])
-stat.loss_plot_train_test(train_MSE, test_MSE, 'Train loss vs Test loss')
+stat.loss_plot_train_test(train_MSE, test_MSE, 'Test loss')
 
 # ------ PREDICCIONES ---------
 predicted_y_test = hypothesis(data_regg.data_test, coeffs_regg.params, coeffs_regg.b)

@@ -87,8 +87,6 @@ def epochs(data: Data, coeffs: Coefficients, hyp_params: Hyperparameters):
   params = coeffs.params.copy()
   b = coeffs.b
 
-  print("PARAMS INICIALES:", params, " BIAS INICIAL:", b)
-
   train_MSE = np.zeros(hyp_params.num_epochs)
   test_MSE = np.zeros(hyp_params.num_epochs)
   train_MAE = np.zeros(hyp_params.num_epochs)
