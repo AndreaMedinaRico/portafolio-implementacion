@@ -4,7 +4,8 @@ Descripción: Implementación manual del algoritmo Ten Fold Cross Validation
     para evaluar el modelo antes de pasar a probarlo.
 Autora: Andrea Medina Rico
 '''
-from algorithms.regression_gd import epochs
+from algorithms.regression_gd import epochs, hypothesis
+from visualization.statistic import Statistic
 from model.ModelInput import Data, Hyperparameters, Coefficients
 import numpy as np
 
@@ -30,6 +31,9 @@ def cross_validation(data: Data, hyp_params: Hyperparameters, coeffs: Coefficien
     all_test_MSE = []
     all_train_MAE = np.zeros(hyp_params.k)
     all_test_MAE = np.zeros(hyp_params.k)
+    all_R2 = np.zeros(hyp_params.k)
+
+    stat = Statistic()
 
     for i in range(hyp_params.k):
 
@@ -52,7 +56,7 @@ def cross_validation(data: Data, hyp_params: Hyperparameters, coeffs: Coefficien
         data.data_train = data.standardize_zscore(data.data_train, media, std)
         data.data_test = data.standardize_zscore(data.data_test, media, std)
 
-        # 0. Reinicializar coeficientes
+        # Reinicializar coeficientes
         data.m, data.n = data.data_train.shape
         coeffs.params = np.zeros(data.n)
         coeffs.b = 0
@@ -62,6 +66,9 @@ def cross_validation(data: Data, hyp_params: Hyperparameters, coeffs: Coefficien
         # 4. Aplicar gradient descent en train
         print("Split ", i)
         train_MSE, test_MSE, train_MAE, test_MAE = epochs(data, coeffs, hyp_params)
+        predicted_y = hypothesis(data.data_test, coeffs.params, coeffs.b)
+        r2_stat = stat.r2_score(data.test_y, predicted_y)
+        all_R2[i] = r2_stat
 
         all_train_MSE.append(train_MSE)
         all_test_MSE.append(test_MSE)
@@ -71,9 +78,10 @@ def cross_validation(data: Data, hyp_params: Hyperparameters, coeffs: Coefficien
     # 5. Calcular promedios del MAE loss
     train_MAE_mean = np.mean(all_train_MAE)
     test_MAE_mean = np.mean(all_test_MAE)
+    r2_mean = np.mean(all_R2)
 
     # 6. Calcular promedios del MSE loss por época
     mean_train_MSE = np.mean(all_train_MSE, axis = 0)
     mean_test_MSE = np.mean(all_test_MSE, axis = 0) 
 
-    return mean_train_MSE, mean_test_MSE, train_MAE_mean, test_MAE_mean
+    return mean_train_MSE, mean_test_MSE, train_MAE_mean, test_MAE_mean, r2_mean
