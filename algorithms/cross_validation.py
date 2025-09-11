@@ -32,6 +32,7 @@ def cross_validation(data: Data, hyp_params: Hyperparameters, coeffs: Coefficien
     all_test_MAE = np.zeros(hyp_params.k)
 
     for i in range(hyp_params.k):
+
         # 1. Usar split 1 como test
         data.data_test = splits[i]
         data.test_y = y_splits[i]
@@ -51,8 +52,12 @@ def cross_validation(data: Data, hyp_params: Hyperparameters, coeffs: Coefficien
         data.data_train = data.standardize_zscore(data.data_train, media, std)
         data.data_test = data.standardize_zscore(data.data_test, media, std)
 
-        # 4. Aplicar gradient descent en train
+        # 0. Reinicializar coeficientes
         data.m, data.n = data.data_train.shape
+        coeffs.params = np.zeros(data.n)
+        coeffs.b = 0
+
+        # 4. Aplicar gradient descent en train
         print("Split ", i)
         coeffs.params, coeffs.b, train_MSE, test_MSE, train_MAE, test_MAE = epochs(data, coeffs, hyp_params)
 
