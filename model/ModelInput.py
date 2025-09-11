@@ -1,18 +1,27 @@
 import numpy as np
 
-class ModelInput:
-    def __init__(self, data, real_y, params, b, alpha, k, num_epochs):
-        self.data = data
-        self.real_y = real_y
-        self.data_train = 0
-        self.data_test = 0
-        self.train_y = 0
-        self.test_y = 0
-        self.params = params
-        self.b = b
-        self.alpha = alpha
-        self.k = k
+class Hyperparameters:
+    def __init__(self, alpha, num_epochs, k):
+        self.alpha = alpha          
         self.num_epochs = num_epochs
+        self.k = k
+
+
+class Coefficients:
+    def __init__(self):
+        self.params = None     
+        self.b = 0
+
+class Data:
+    def __init__(self, data, real_y):
+        self.data = data
+        self.data_train = None
+        self.data_test = None
+
+        self.real_y = real_y
+        self.train_y = None
+        self.test_y = None
+
         self.m = 0
         self.n = 0
 
@@ -27,6 +36,11 @@ class ModelInput:
         self.data_train = pd_train.to_numpy()
         self.data_test = pd_test.to_numpy()
 
+        print("\nTrain:", pd_train.shape)
+        print("\nInformación de datos de train:", pd_train.info())
+        print("\nTest:", pd_test.shape)
+        print("\nInformación de datos de test:", pd_test.info())
+
         # Separación de las Y
         self.train_y = self.data_train[:, 3]                      
         self.data_train = np.delete(self.data_train, 3, axis=1)
@@ -36,3 +50,16 @@ class ModelInput:
 
         # Actualización de m y n
         self.m, self.n = self.data_train.shape
+
+
+    def zscores_measures(self, data):
+        media = np.mean(data, axis = 0)
+        std = np.std(data, axis = 0)
+
+        return media, std
+
+
+    def standardize_zscore(self, data, media, std):
+        normalized_data = (data - media) / std
+
+        return normalized_data

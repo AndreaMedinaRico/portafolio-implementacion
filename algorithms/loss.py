@@ -5,13 +5,14 @@ Autora: Andrea Medina Rico
 '''
 
 import numpy as np
+from model.ModelInput import Data, Coefficients, Hyperparameters
 
 # Misma que en regression_gd.py
-def hypothesis(data, params, b):
+def hypothesis(data, coeffs):
   predicted_y = []
-  param_n = data * params
+  param_n = data * coeffs.params
   sum_params = np.sum(param_n, axis = 1)
-  predicted_y =  sum_params + b
+  predicted_y =  sum_params + coeffs.b
 
   return predicted_y
 
@@ -32,9 +33,9 @@ Notas:
   Esta función es MERAMENTE para INFORMARNOS acerca del comportamiento
   de los errores.
 '''
-def MSE(data, params, b, real_y, m):
+def MSE(data, coeffs, real_y, m):
   cost = 0
-  predicted_y = hypothesis(data, params, b)
+  predicted_y = hypothesis(data, coeffs)
 
   for i in range(m):
     cost += (predicted_y[i] - real_y[i]) ** 2
@@ -55,9 +56,9 @@ Params:
 Return:
   final_cost - valor del RMSE
 '''
-def RMSE(data, params, b, real_y, m):
+def RMSE(data, coeffs, real_y, m):
 
-  mse = MSE(data, params, b, real_y, m)
+  mse = MSE(data, coeffs, real_y, m)
   final_cost = np.sqrt(2 * mse)
 
   return final_cost
@@ -75,18 +76,18 @@ Params:
 Return:
   final_cost - valor del MAE
 '''
-def MAE(data, params, b, real_y, m):
+def MAE(data, coeffs, real_y, m):
 
-  predicted_y = hypothesis(data, params, b)
+  predicted_y = hypothesis(data, coeffs)
   final_cost = np.sum(np.abs(predicted_y - real_y)) / m
 
   return final_cost
 
 
-def epochs_loss(data, params, b, real_y, m, test_data, test_y):
-    train_mse = MSE(data, params, b, real_y, m)
-    test_mse = MSE(test_data, params, b, test_y, test_data.shape[0])
-    train_mae = MAE(data, params, b, real_y, m)
-    test_mae = MAE(test_data, params, b, test_y, test_data.shape[0])
+def epochs_loss(data: Data, coeffs: Coefficients):
+    train_mse = MSE(data.data_train, coeffs, data.train_y, data.m)
+    test_mse = MSE(data.data_test, coeffs, data.test_y, data.data_test.shape[0])
+    train_mae = MAE(data.data_train, coeffs, data.train_y, data.m)
+    test_mae = MAE(data.data_test, coeffs, data.test_y, data.data_test.shape[0])
 
     return train_mse, test_mse, train_mae, test_mae

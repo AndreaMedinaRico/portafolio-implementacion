@@ -7,6 +7,7 @@ Autora: Andrea Medina Rico
 
 import numpy as np
 from algorithms.loss import epochs_loss
+from model.ModelInput import Hyperparameters, Coefficients, Data
 
 '''
 Función: hypothesis
@@ -19,18 +20,18 @@ Params:
 Return:
   predicted_y - arreglo de las predicciones de 'y' de tamaño 'm' (filas)
 '''
-def hypothesis(data, params, b):
+def hypothesis(data, coeffs: Coefficients):
   # Valores iniciales
   predicted_y = []
 
   # Multiplicacion p1x1 p2x2 p3x3 por fila
-  param_n = data * params
+  param_n = data * coeffs.params
 
   # Suma de los param * x de un solo renglón
   sum_params = np.sum(param_n, axis = 1)
 
   # Adición de bias a cada renglón
-  predicted_y =  sum_params + b
+  predicted_y =  sum_params + coeffs.b
 
   return predicted_y
 
@@ -55,26 +56,26 @@ Notas:
   La suma del gradiente se hace tras calcular cada columna. Por eso, el ciclo
   para las columans va primero.
 '''
-def update(data, params, b, real_y, alfa, m, n):
+def update(data: Data, coeffs: Coefficients, hyp_params: Hyperparameters):
   grad = 0
-  new_params = np.zeros(n)
+  new_params = np.zeros(data.n)
 
   # Guardamos valores de y predecidos
-  predicted_y = hypothesis(data, params, b)
+  predicted_y = hypothesis(data.data_train, coeffs)
 
   # Guardamos error de cada renglón (prediccion - real)
-  error = predicted_y - real_y
+  error = predicted_y - data.train_y
 
   # Multiplicamos cada error por cada registro en x
-  for j in range(n):                    # Columnas
+  for j in range(data.n):                    # Columnas
     grad = 0
-    for i in range(m):                  # Filas
-      grad += error[i] * data[i][j]
+    for i in range(data.m):                  # Filas
+      grad += error[i] * data.data_train[i][j]
 
-    new_params[j] = params[j] - alfa / m * grad
+    new_params[j] = coeffs.params[j] - hyp_params.alpha / data.m * grad
 
   grad = np.sum(error)
-  new_b = b - alfa / m * grad
+  new_b = coeffs.b - hyp_params.alpha / data.m * grad
 
   return new_params, new_b
 
@@ -94,16 +95,16 @@ Return:
   params - parámetros finales
   b - bias final
 '''
-def epochs(data, params, b, real_y, alfa, num_epochs, m, n, test_data, test_y):
-  train_MSE = np.zeros(num_epochs)
-  test_MSE = np.zeros(num_epochs)
-  train_MAE = np.zeros(num_epochs)
-  test_MAE = np.zeros(num_epochs)
+def epochs(data: Data, coeffs: Coefficients, hyp_params: Hyperparameters):
+  train_MSE = np.zeros(hyp_params.num_epochs)
+  test_MSE = np.zeros(hyp_params.num_epochs)
+  train_MAE = np.zeros(hyp_params.num_epochs)
+  test_MAE = np.zeros(hyp_params.num_epochs)
 
   i = 0
-  while (i < num_epochs):
-    params, b = update(data, params, b, real_y, alfa, m, n)
-    train_MSE[i], test_MSE[i], train_MAE[i], test_MAE[i] = epochs_loss(data, params, b, real_y, m, test_data, test_y)
+  while (i < hyp_params.num_epochs):
+    coeffs.params, coeffs.b = update(data, coeffs, hyp_params)
+    train_MSE[i], test_MSE[i], train_MAE[i], test_MAE[i] = epochs_loss(data, coeffs)
     i += 1
 
-  return params, b, train_MSE, test_MSE, train_MAE, test_MAE
+  return coeffs.params, coeffs.b, train_MSE, test_MSE, train_MAE, test_MAE

@@ -5,91 +5,56 @@ Descripción: Implementación manual del algoritmo Ten Fold Cross Validation
 Autora: Andrea Medina Rico
 '''
 from algorithms.regression_gd import epochs
+from model.ModelInput import Data, Hyperparameters, Coefficients
 import numpy as np
-
-'''
-Función: zscores_measures
-Descripción: Calcula la media y la desviación estándar de cada característica
-    en el conjunto de datos.
-Params:
-    data: Conjunto de datos de entrada.
-Returns:
-    media: Media de cada característica.
-    std: Desviación estándar de cada característica.
-'''
-def zscores_measures(data):
-    media = np.mean(data, axis = 0)
-    std = np.std(data, axis = 0)
-
-    return media, std
-
-'''
-Función: standardize_zscore
-Descripción: Normaliza los datos utilizando la normalización Z-score
-    por cada característica.
-Params:
-    data: Conjunto de datos de entrada.
-Returns:
-    normalized_data: Conjunto de datos normalizado.
-'''
-def standardize_zscore(data, media, std):
-    normalized_data = (data - media) / std
-
-    return normalized_data
 
 '''
 Función: cross_validation
 Descripción: Realiza la validación cruzada en k pliegues.
 Params:
     data: Conjunto de datos de entrada.
-    real_y: Valores reales de salida.
-    k: Número de pliegues.
-    params: Parámetros del modelo.
-    b: Término de sesgo del modelo.
-    alfa: Tasa de aprendizaje.
-    num_epochs: Número de épocas para el entrenamiento.
+    hyp_params: Hiperparámetros del modelo.
+    coeffs: Coeficientes del modelo.
 Returns:
     train_loss: Pérdida en el conjunto de entrenamiento.
     train_loss_mean: Pérdida media en el conjunto de entrenamiento.
     test_loss: Pérdida en el conjunto de prueba.
     test_loss_mean: Pérdida media en el conjunto de prueba.
 '''
-def cross_validation(data, real_y, k, params, b, alfa, num_epochs):
+def cross_validation(data: Data, hyp_params: Hyperparameters, coeffs: Coefficients):
     # División de los datos en k partes
-    splits = np.array_split(data, k)
-    y_splits = np.array_split(real_y, k)
+    splits = np.array_split(data.data_train, hyp_params.k)
+    y_splits = np.array_split(data.train_y, hyp_params.k)
 
     all_train_MSE = []
     all_test_MSE = []
-    all_train_MAE = np.zeros(k)
-    all_test_MAE = np.zeros(k)
+    all_train_MAE = np.zeros(hyp_params.k)
+    all_test_MAE = np.zeros(hyp_params.k)
 
-    for i in range(k):
+    for i in range(hyp_params.k):
         # 1. Usar split 1 como test
-        test_split = splits[i]
-        test_y = y_splits[i]
+        data.data_test = splits[i]
+        data.test_y = y_splits[i]
 
         # 2. Usar los demás como train
         train_folds = []
         y_folds = []
-        for j in range(k):
+        for j in range(hyp_params.k):
             if j != i:
                 train_folds.append(splits[j])
                 y_folds.append(y_splits[j])
-        train_split = np.concatenate(train_folds)
-        train_y = np.concatenate(y_folds)
+        data.data_train = np.concatenate(train_folds)
+        data.train_y = np.concatenate(y_folds)
 
         # 3. Estandarizar los datos
-        media, std = zscores_measures(train_split)
-        train_split = standardize_zscore(train_split, media, std)
-        test_split = standardize_zscore(test_split, media, std)
+        media, std = data.zscores_measures(data.data_train)
+        data.data_train = data.standardize_zscore(data.data_train, media, std)
+        data.data_test = data.standardize_zscore(data.data_test, media, std)
 
         # 4. Aplicar gradient descent en train
-        m, n = train_split.shape
+        data.m, data.n = data.data_train.shape
         print("Split ", i)
-        new_params, new_b, train_MSE, test_MSE, train_MAE, test_MAE = epochs(
-            train_split, params, b, train_y, alfa, num_epochs, m, n, test_split, test_y
-        )
+        coeffs.params, coeffs.b, train_MSE, test_MSE, train_MAE, test_MAE = epochs(data, coeffs, hyp_params)
 
         all_train_MSE.append(train_MSE)
         all_test_MSE.append(test_MSE)
