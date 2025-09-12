@@ -7,7 +7,8 @@ Autora: Andrea Medina Rico
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_absolute_error, r2_score
+import matplotlib.pyplot as plt
+from sklearn.metrics import mean_absolute_error, r2_score, mean_squared_error
 
 from model.Transformation import Transformation
 from model.ModelInput import Hyperparameters, Coefficients, Data
@@ -116,31 +117,44 @@ print("Coeficiente de determinación R2 en test:", r2_stat)
 # -------------------------------
 # RANDOM FOREST 
 # -------------------------------
+data_rf = Data(trans.data, 0)
+data_rf.split_data()
+
 rf = RandomForestRegressor(
-    n_estimators = 500,
+    n_estimators = 300,
     max_depth = 10,
     min_samples_split = 4,
-    min_samples_leaf = 2,
     max_features = 'sqrt',
-    oob_score = True,
+    max_samples = 0.8,
+    max_leaf_nodes = 100,
     random_state = 42
 )
 
 # --------- VALIDACIÓN ---------
 print("\n--------- Random Forest ---------")
 print("\nCross validation... :)")
-train_mMSE_rf, test_mMSE_RF, train_mMAE_rf, test_mMAE_, mr2_rf = cross_validation(data_validation, hyp_params, coeffs, 'rf', rf)
+train_mMSE_rf, test_mMSE_RF, train_mMAE_rf, test_mMAE_rf, mr2_rf = cross_validation(data_rf, hyp_params, coeffs, 'rf', rf)
 
+print("\nValidation results:")
 print("Final Train MSE mean:", train_mMSE_rf)
 print("Final Validation MSE mean:", test_mMSE_RF)
 print("Final Train MAE mean:", train_mMAE_rf)
-print("Final Validation MAE mean:", test_mMAE_)
+print("Final Validation MAE mean:", test_mMAE_rf)
 print("Final R2 mean in validation:", mr2_rf)
 
-rf.fit(data_regg.data_train, data_regg.train_y)
-rf_pred = rf.predict(data_regg.data_test)
+train_errors, test_errors = stat.calculate_loss_rf(data_rf, rf, 301)
+stat.loss_random_forest(train_errors, test_errors, 301)
 
-print("MAE:", mean_absolute_error(data_regg.test_y, rf_pred))
-print("R2:", r2_score(data_regg.test_y, rf_pred))
+# --------- ENTRENAMIENTO ---------
+print("\n Training Random Forest... :)")
+rf.fit(data_rf.data_train, data_rf.train_y)
+rf_pred = rf.predict(data_rf.data_test)
 
-stat.prediction_plot(data_regg.test_y, rf_pred)
+print("MSE:", mean_squared_error(data_rf.test_y, rf_pred))
+print("MAE:", mean_absolute_error(data_rf.test_y, rf_pred))
+print("R2:", r2_score(data_rf.test_y, rf_pred))
+
+train_loss_rf, test_loss_rf = stat.calculate_loss_rf(data_rf, rf, 301)
+stat.loss_random_forest(train_errors, test_errors, 301)
+
+stat.prediction_plot(data_rf.test_y, rf_pred)

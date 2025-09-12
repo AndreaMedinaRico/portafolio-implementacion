@@ -5,6 +5,7 @@ Descripción: Archivo para realizar un análisis estadístico
 Autora: Andrea Medina Rico
 '''
 import matplotlib.pyplot as plt
+from sklearn.metrics import mean_squared_error
 import seaborn as sns
 import numpy as np
 
@@ -92,3 +93,34 @@ class Statistic:
         ss_tot = np.sum((real_y - np.mean(real_y)) ** 2)
         r2 = 1 - (ss_res / ss_tot)
         return r2
+    
+
+    def calculate_loss_rf(self, data, rf, n_trees):
+        train_errors = []
+        test_errors = []
+        for n_trees in range(1, n_trees):
+            rf.set_params(n_estimators=n_trees)
+            rf.fit(data.data_train, data.train_y)
+
+            # Predicciones en train y test
+            y_train_pred = rf.predict(data.data_train)
+            y_test_pred = rf.predict(data.data_test)
+
+            # MSE en train y test
+            train_mse = mean_squared_error(data.train_y, y_train_pred)
+            test_mse = mean_squared_error(data.test_y, y_test_pred)
+
+            train_errors.append(train_mse)
+            test_errors.append(test_mse)
+        return train_errors, test_errors
+    
+
+    def loss_random_forest(self, train_loss, test_loss, n_trees):
+        plt.figure(figsize = (10, 6))
+        plt.plot(range(1, n_trees), train_loss, label = "Train MSE", color = "blue")
+        plt.plot(range(1, n_trees), test_loss, label = "Test MSE", color = "red")
+        plt.xlabel("Número de árboles (n_estimators)")
+        plt.ylabel("MSE")
+        plt.title("Error Train vs Test en Random Forest")
+        plt.legend()
+        plt.show()
