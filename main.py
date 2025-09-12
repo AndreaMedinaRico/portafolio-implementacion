@@ -71,15 +71,16 @@ coeffs.params = np.zeros(data_validation.data_train.shape[1])
 
 
 # ------- VALIDACIÓN ---------
+'''
 print("\nCross validation... :)")
-train_loss_cv, test_loss_cv, train_MAE_mean, test_MAE_mean, r2_mean = cross_validation(data_validation, hyp_params, coeffs)
+train_loss_cv, test_loss_cv, train_MAE_mean, test_MAE_mean, r2_mean = cross_validation(data_validation, hyp_params, coeffs, 'lineal')
 
 print("Final Train MAE mean:", train_MAE_mean)
 print("Final Validation MAE mean:", test_MAE_mean)
 print("Final R2 mean in validation:", r2_mean)
 
 stat.loss_plot_train_test(train_loss_cv, test_loss_cv, 'Validation loss')
-
+'''
 
 # ------- ENTRENAMIENTO --------
 data_regg = Data(trans.data, 0)
@@ -112,16 +113,30 @@ r2_stat = stat.r2_score(data_regg.test_y, predicted_y_test)
 print("Coeficiente de determinación R2 en test:", r2_stat)
 
 
-# ------- RANDOM FOREST --------
+# -------------------------------
+# RANDOM FOREST 
+# -------------------------------
 rf = RandomForestRegressor(
-    n_estimators=500,
-    max_depth=10,
-    min_samples_split=4,
-    min_samples_leaf=2,
-    max_features='sqrt',
-    oob_score=True,
-    random_state=42
+    n_estimators = 500,
+    max_depth = 10,
+    min_samples_split = 4,
+    min_samples_leaf = 2,
+    max_features = 'sqrt',
+    oob_score = True,
+    random_state = 42
 )
+
+# --------- VALIDACIÓN ---------
+print("\n--------- Random Forest ---------")
+print("\nCross validation... :)")
+train_mMSE_rf, test_mMSE_RF, train_mMAE_rf, test_mMAE_, mr2_rf = cross_validation(data_validation, hyp_params, coeffs, 'rf', rf)
+
+print("Final Train MSE mean:", train_mMSE_rf)
+print("Final Validation MSE mean:", test_mMSE_RF)
+print("Final Train MAE mean:", train_mMAE_rf)
+print("Final Validation MAE mean:", test_mMAE_)
+print("Final R2 mean in validation:", mr2_rf)
+
 rf.fit(data_regg.data_train, data_regg.train_y)
 rf_pred = rf.predict(data_regg.data_test)
 
