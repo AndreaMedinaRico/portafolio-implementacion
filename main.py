@@ -101,7 +101,7 @@ print("Final Train MAE:", train_MAE[-1])
 print("Final Test MAE:", test_MAE[-1])
 print("Final Train MSE:", train_MSE[-1])
 print("Final Test MSE:", test_MSE[-1])
-stat.loss_plot_train_test(train_MSE, test_MSE, 'Test loss')
+stat.loss_plot_train_test_val(train_MSE, test_loss_cv, test_MSE, 'Loss vs. Epochs')
 
 # ------ PREDICCIONES ---------
 predicted_y_test = hypothesis(data_regg.data_test, coeffs_regg.params, coeffs_regg.b)

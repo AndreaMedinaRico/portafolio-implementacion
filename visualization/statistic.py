@@ -76,6 +76,17 @@ class Statistic:
         plt.legend()
         plt.show()
 
+    def loss_plot_train_test_val(self, train_loss, test_loss, val_loss, title):
+        plt.figure(figsize=(10, 6))
+        plt.plot(train_loss, label='Train loss', linestyle='solid')
+        plt.plot(test_loss, label='Test loss', linestyle='dashed')
+        plt.plot(val_loss, label='Validation loss', linestyle='dotted')
+        plt.title(title)
+        plt.xlabel('Épocas')
+        plt.ylabel('Loss')
+        plt.legend()
+        plt.show()
+
 
     def prediction_plot(self, real_y, predicted_y):
         plt.figure(figsize=(10, 6))
