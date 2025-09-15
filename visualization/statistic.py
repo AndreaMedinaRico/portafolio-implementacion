@@ -123,7 +123,6 @@ class Statistic:
 
             train_errors.append(train_mse)
             test_errors.append(test_mse)
-            print("Iteración con", n_trees, "árboles - Train MSE:", train_mse, "- Test MSE:", test_mse)
         return train_errors, test_errors
     
 
