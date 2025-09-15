@@ -47,8 +47,8 @@ trans.rename_columns({
 })
 
 # Buscar anomalías
-print(trans.data.describe())
-print(trans.data.count())
+# print(trans.data.describe())
+# print(trans.data.count())
 
 
 stat = Statistic()
@@ -72,7 +72,6 @@ coeffs.params = np.zeros(data_validation.data_train.shape[1])
 
 
 # ------- VALIDACIÓN ---------
-'''
 print("\nCross validation... :)")
 train_loss_cv, test_loss_cv, train_MAE_mean, test_MAE_mean, r2_mean = cross_validation(data_validation, hyp_params, coeffs, 'lineal')
 
@@ -81,7 +80,6 @@ print("Final Validation MAE mean:", test_MAE_mean)
 print("Final R2 mean in validation:", r2_mean)
 
 stat.loss_plot_train_test(train_loss_cv, test_loss_cv, 'Validation loss')
-'''
 
 # ------- ENTRENAMIENTO --------
 data_regg = Data(trans.data, 0)
