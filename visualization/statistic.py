@@ -126,9 +126,10 @@ class Statistic:
         return train_errors, test_errors
     
 
-    def loss_random_forest(self, train_loss, test_loss, n_trees):
+    def loss_random_forest(self, train_loss, val_loss, test_loss, n_trees):
         plt.figure(figsize = (10, 6))
         plt.plot(range(1, n_trees), train_loss, label = "Train MSE", color = "blue")
+        plt.plot(range(1, n_trees), val_loss, label = "Validation MSE", color = "orange")
         plt.plot(range(1, n_trees), test_loss, label = "Test MSE", color = "red")
         plt.xlabel("Número de árboles (n_estimators)")
         plt.ylabel("MSE")
