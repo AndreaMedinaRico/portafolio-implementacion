@@ -109,7 +109,6 @@ r2_stat = stat.r2_score(data_regg.test_y, predicted_y_test)
 
 print("Coeficiente de determinación R2 en test:", r2_stat)
 
-
 # -------------------------------
 # RANDOM FOREST 
 # -------------------------------
@@ -134,28 +133,60 @@ vtrain_errors, val_errors = stat.calculate_loss_rf(data_rf, rf, 101)
 
 # --------- ENTRENAMIENTO ---------
 print("\n Training Random Forest... :)")
-rf.fit(data_rf.data_train, data_rf.train_y)
-rf_pred = rf.predict(data_rf.data_test)
+data_rf2 = Data(trans.data, 0)
+data_rf2.split_data()
+rf.fit(data_rf2.data_train, data_rf2.train_y)
+rf_pred = rf.predict(data_rf2.data_test)
 
-print("MSE:", mean_squared_error(data_rf.test_y, rf_pred))
-print("MAE:", mean_absolute_error(data_rf.test_y, rf_pred))
-print("R2:", r2_score(data_rf.test_y, rf_pred))
+print("MSE:", mean_squared_error(data_rf2.test_y, rf_pred))
+print("MAE:", mean_absolute_error(data_rf2.test_y, rf_pred))
+print("R2:", r2_score(data_rf2.test_y, rf_pred))
 
-train_loss_rf, test_loss_rf = stat.calculate_loss_rf(data_rf, rf, 101)
+train_loss_rf, test_loss_rf = stat.calculate_loss_rf(data_rf2, rf, 101)
 stat.loss_random_forest(train_loss_rf, val_errors, test_loss_rf, 101)
 
-stat.prediction_plot(data_rf.test_y, rf_pred)
+stat.prediction_plot(data_rf2.test_y, rf_pred)
 
 
 # -------------------------------
 # MEJORA
 # -------------------------------
+data_rf_imp = Data(trans.data, 0)
+data_rf_imp.split_data()
 rf_improved = RandomForestRegressor(
     n_estimators = 300,
-    max_depth = 10,
+    max_depth = 15,
     min_samples_split = 4,
     max_features = 'sqrt',
     max_samples = 0.8,
-    max_leaf_nodes = 100,
     random_state = 42
 )
+
+print("\n--------- Mejora de Random Forest ---------")
+print("\nCross validation... :)")
+train_mMSE_rf_imp, test_mMSE_RF_imp, train_mMAE_rf_imp, test_mMAE_rf_imp, mr2_rf_imp = cross_validation(data_rf_imp, hyp_params, coeffs, 'rf', rf_improved)
+
+print("\nValidation results:")
+print("Final Train MSE mean:", train_mMSE_rf_imp)
+print("Final Validation MSE mean:", test_mMSE_RF_imp)
+print("Final Train MAE mean:", train_mMAE_rf_imp)
+print("Final Validation MAE mean:", test_mMAE_rf_imp)
+print("Final R2 mean in validation:", mr2_rf_imp)
+
+vtrain_errors_imp, val_errors_imp = stat.calculate_loss_rf(data_rf_imp, rf_improved, 301)
+
+# --------- ENTRENAMIENTO ---------
+print("\n Training Random Forest... :)")
+data_rf_imp2 = Data(trans.data, 0)
+data_rf_imp2.split_data()
+rf_improved.fit(data_rf_imp2.data_train, data_rf_imp2.train_y)
+rf_pred_imp = rf_improved.predict(data_rf_imp2.data_test)
+
+print("MSE:", mean_squared_error(data_rf_imp2.test_y, rf_pred_imp))
+print("MAE:", mean_absolute_error(data_rf_imp2.test_y, rf_pred_imp))
+print("R2:", r2_score(data_rf_imp2.test_y, rf_pred_imp))
+
+train_loss_rf_imp, test_loss_rf_imp = stat.calculate_loss_rf(data_rf_imp2, rf_improved, 301)
+stat.loss_random_forest(train_loss_rf_imp, val_errors_imp, test_loss_rf_imp, 301)
+
+stat.prediction_plot(data_rf_imp2.test_y, rf_pred_imp)
