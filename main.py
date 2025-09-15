@@ -56,6 +56,11 @@ stat = Statistic()
 # Descomentar para ver gráficos utilizados en el reporte.
 # visualization(trans.data)
 
+
+# -------------------------------
+# REGRESIÓN LINEAL
+# -------------------------------
+
 # Inicialización variables
 alfa = 0.001                                    
 num_epochs = 5000                              
@@ -72,10 +77,13 @@ coeffs.params = np.zeros(data_validation.data_train.shape[1])
 
 
 # ------- VALIDACIÓN ---------
+print("\n--------- Regresión Lineal ---------")
 print("\nCross validation... :)")
-train_loss_cv, test_loss_cv, train_MAE_mean, test_MAE_mean, r2_mean = cross_validation(data_validation, hyp_params, coeffs, 'lineal')
+train_loss_cv, val_loss_cv, train_MAE_mean, test_MAE_mean, r2_mean = cross_validation(data_validation, hyp_params, coeffs, 'lineal')
+val_mloss = val_loss_cv.mean()
 
-print("Final Train MAE mean:", train_MAE_mean)
+print("\nValidation results:")
+print("Final Validation MSE mean:", val_mloss)
 print("Final Validation MAE mean:", test_MAE_mean)
 print("Final R2 mean in validation:", r2_mean)
 
@@ -93,21 +101,27 @@ data_regg.data_test = data_regg.standardize_zscore(data_regg.data_test, mean, st
 print("\n Entrenando modelo... :)")
 train_MSE, test_MSE, train_MAE, test_MAE = epochs(data_regg, coeffs_regg, hyp_params)
 
-print("Final parameters:", coeffs_regg.params)
-print("Final bias:", coeffs_regg.b)
-print("Final Train MAE:", train_MAE[-1])
-print("Final Test MAE:", test_MAE[-1])
-print("Final Train MSE:", train_MSE[-1])
-print("Final Test MSE:", test_MSE[-1])
-stat.loss_plot_train_test_val(train_MSE, test_loss_cv, test_MSE, 'Loss vs. Epochs')
-
 # ------ PREDICCIONES ---------
 predicted_y_test = hypothesis(data_regg.data_test, coeffs_regg.params, coeffs_regg.b)
+predicted_y_train = hypothesis(data_regg.data_train, coeffs_regg.params, coeffs_regg.b)
 
-stat.prediction_plot(data_regg.test_y, predicted_y_test)
 r2_stat = stat.r2_score(data_regg.test_y, predicted_y_test)
+r2_train = stat.r2_score(data_regg.train_y, predicted_y_train)
 
-print("Coeficiente de determinación R2 en test:", r2_stat)
+print("\nFinal parameters:", coeffs_regg.params)
+print("Final bias:", coeffs_regg.b)
+print("\nTrain results:")
+print("Final Train MAE:", train_MAE[-1])
+print("Final Train MSE:", train_MSE[-1])
+print("R2 en train:", r2_train)
+
+print("\nTest results:")
+print("Final Test MAE:", test_MAE[-1])
+print("Final Test MSE:", test_MSE[-1])
+print("R2 en test:", r2_stat)
+
+stat.loss_plot_train_test_val(train_MSE, val_loss_cv, test_MSE, 'Loss vs. Epochs')
+stat.prediction_plot(data_regg.test_y, predicted_y_test)
 
 # -------------------------------
 # RANDOM FOREST 
