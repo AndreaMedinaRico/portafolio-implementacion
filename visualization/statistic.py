@@ -148,3 +148,5 @@ class Statistic:
         plt.ylabel("Frecuencia")
         plt.axvline(0, color="red", linestyle="dashed", linewidth=2)
         plt.show()
+        std_residuals = np.std(residuals)
+        print("Desviación estándar de los residuales:", std_residuals)
