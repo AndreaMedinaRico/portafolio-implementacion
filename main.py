@@ -75,7 +75,6 @@ data_validation = Data(trans.data, 0)
 data_validation.split_data()
 coeffs.params = np.zeros(data_validation.data_train.shape[1])
 
-
 # ------- VALIDACIÓN ---------
 print("\n--------- Regresión Lineal ---------")
 print("\nCross validation... :)")
@@ -122,6 +121,7 @@ print("R2 en test:", r2_stat)
 
 stat.loss_plot_train_test_val(train_MSE, val_loss_cv, test_MSE, 'Loss vs. Epochs')
 stat.prediction_plot(data_regg.test_y, predicted_y_test)
+stat.residuals_plot(data_regg.test_y, predicted_y_test)
 
 # -------------------------------
 # RANDOM FOREST 
@@ -165,6 +165,7 @@ train_loss_rf, test_loss_rf = stat.calculate_loss_rf(data_rf2, rf, 101)
 stat.loss_random_forest(train_loss_rf, val_errors, test_loss_rf, 101)
 
 stat.prediction_plot(data_rf2.test_y, rf_pred)
+stat.residuals_plot(data_rf2.test_y, rf_pred)
 
 
 # -------------------------------
@@ -214,3 +215,4 @@ train_loss_rf_imp, test_loss_rf_imp = stat.calculate_loss_rf(data_rf_imp2, rf_im
 stat.loss_random_forest(train_loss_rf_imp, val_errors_imp, test_loss_rf_imp, 301)
 
 stat.prediction_plot(data_rf_imp2.test_y, rf_pred_imp)
+stat.residuals_plot(data_rf_imp2.test_y, rf_pred_imp)

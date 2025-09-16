@@ -137,3 +137,14 @@ class Statistic:
         plt.title("Loss vs N Estimators (Random Forest)")
         plt.legend()
         plt.show()
+
+    
+    def residuals_plot(self, real_y, predicted_y):
+        residuals = real_y - predicted_y
+        plt.figure(figsize=(8,5))
+        sns.histplot(residuals, bins=30, kde=True, color="green")
+        plt.title("Distribución de residuales")
+        plt.xlabel("Residual")
+        plt.ylabel("Frecuencia")
+        plt.axvline(0, color="red", linestyle="dashed", linewidth=2)
+        plt.show()
